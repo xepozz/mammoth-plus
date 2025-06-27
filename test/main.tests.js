@@ -10,7 +10,7 @@ var test = require("./test")(module);
 var testPath = require("./testing").testPath;
 
 test("HTML is printed to stdout if output file is not set", function() {
-    return runmammoth-plus(testPath("single-paragraph.docx")).then(function(result) {
+    return runMammothPlus(testPath("single-paragraph.docx")).then(function(result) {
         assert.equal(result.stderrOutput, "");
         assert.equal(result.output, "<p>Walking on imported air</p>");
     });
@@ -19,7 +19,7 @@ test("HTML is printed to stdout if output file is not set", function() {
 test("HTML is written to file if output file is set", function() {
     return createTempDir().then(function(tempDir) {
         var outputPath = path.join(tempDir, "output.html");
-        return runmammoth-plus(testPath("single-paragraph.docx"), outputPath).then(function(result) {
+        return runMammothPlus(testPath("single-paragraph.docx"), outputPath).then(function(result) {
             assert.equal(result.stderrOutput, "");
             assert.equal(result.output, "");
             assert.equal(fs.readFileSync(outputPath, "utf8"), "<p>Walking on imported air</p>");
@@ -30,7 +30,7 @@ test("HTML is written to file if output file is set", function() {
 var imageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=";
 
 test("inline images are included in output if writing to single file", function() {
-    return runmammoth-plus(testPath("tiny-picture.docx")).then(function(result) {
+    return runMammothPlus(testPath("tiny-picture.docx")).then(function(result) {
         assert.equal(result.stderrOutput, "");
         assert.equal(result.output, '<p><img src="data:image/png;base64,' + imageBase64 + '" /></p>');
     });
@@ -40,7 +40,7 @@ test("images are written to separate files if output dir is set", function() {
     return createTempDir().then(function(tempDir) {
         var outputPath = path.join(tempDir, "tiny-picture.html");
         var imagePath = path.join(tempDir, "1.png");
-        return runmammoth-plus(testPath("tiny-picture.docx"), "--output-dir", tempDir).then(function(result) {
+        return runMammothPlus(testPath("tiny-picture.docx"), "--output-dir", tempDir).then(function(result) {
             assert.equal(result.stderrOutput, "");
             assert.equal(result.output, "");
             assert.equal(fs.readFileSync(outputPath, "utf8"), '<p><img src="1.png" /></p>');
@@ -53,7 +53,7 @@ test("style map is used if set", function() {
     return createTempDir().then(function(tempDir) {
         var styleMapPath = path.join(tempDir, "style-map");
         fs.writeFileSync(styleMapPath, "p => span:fresh");
-        return runmammoth-plus(testPath("single-paragraph.docx"), "--style-map", styleMapPath).then(function(result) {
+        return runMammothPlus(testPath("single-paragraph.docx"), "--style-map", styleMapPath).then(function(result) {
             assert.equal(result.stderrOutput, "");
             assert.equal(result.output, "<span>Walking on imported air</span>");
         });
@@ -61,14 +61,14 @@ test("style map is used if set", function() {
 });
 
 test("--output-format=markdown option generate markdown output", function() {
-    return runmammoth-plus(testPath("single-paragraph.docx"), "--output-format=markdown").then(function(result) {
+    return runMammothPlus(testPath("single-paragraph.docx"), "--output-format=markdown").then(function(result) {
         assert.equal(result.stderrOutput, "");
         assert.equal(result.output, "Walking on imported air\n\n");
     });
 });
 
 
-function runmammoth-plus() {
+function runMammothPlus() {
     var args = Array.prototype.slice.call(arguments, 0);
     var deferred = promises.defer();
     

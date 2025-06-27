@@ -6,19 +6,19 @@ var contains = hamjest.contains;
 var equalTo = hamjest.equalTo;
 var hasProperties = hamjest.hasProperties;
 
-var mammoth-plus = require("../");
+var mammothPlus = require("../");
 var documents = require("../lib/documents");
 var promises = require("../lib/promises");
 
 var test = require("./test")(module);
 
 
-test('mammoth-plus.images.inline() should be an alias of mammoth-plus.images.imgElement()', function() {
-    assert.ok(mammoth-plus.images.inline === mammoth-plus.images.imgElement);
+test('mammothPlus.images.inline() should be an alias of mammothPlus.images.imgElement()', function() {
+    assert.ok(mammothPlus.images.inline === mammothPlus.images.imgElement);
 });
 
 
-test('mammoth-plus.images.dataUri() encodes images in base64', function() {
+test('mammothPlus.images.dataUri() encodes images in base64', function() {
     var imageBuffer = new Buffer("abc");
     var image = new documents.Image({
         readImage: function(encoding) {
@@ -27,7 +27,7 @@ test('mammoth-plus.images.dataUri() encodes images in base64', function() {
         contentType: "image/jpeg"
     });
 
-    return mammoth-plus.images.dataUri(image).then(function(result) {
+    return mammothPlus.images.dataUri(image).then(function(result) {
         assertThat(result, contains(
             hasProperties({tag: hasProperties({attributes: {"src": "data:image/jpeg;base64,YWJj"}})})
         ));
@@ -35,7 +35,7 @@ test('mammoth-plus.images.dataUri() encodes images in base64', function() {
 });
 
 
-test('mammoth-plus.images.imgElement()', {
+test('mammothPlus.images.imgElement()', {
     'when element does not have alt text then alt attribute is not set': function() {
         var imageBuffer = new Buffer("abc");
         var image = new documents.Image({
@@ -45,7 +45,7 @@ test('mammoth-plus.images.imgElement()', {
             contentType: "image/jpeg"
         });
 
-        var result = mammoth-plus.images.imgElement(function(image) {
+        var result = mammothPlus.images.imgElement(function(image) {
             return {src: "<src>"};
         })(image);
 
@@ -70,7 +70,7 @@ test('mammoth-plus.images.imgElement()', {
             altText: "<alt>"
         });
 
-        var result = mammoth-plus.images.imgElement(function(image) {
+        var result = mammothPlus.images.imgElement(function(image) {
             return {src: "<src>"};
         })(image);
 
@@ -95,7 +95,7 @@ test('mammoth-plus.images.imgElement()', {
             altText: "<alt>"
         });
 
-        var result = mammoth-plus.images.imgElement(function(image) {
+        var result = mammothPlus.images.imgElement(function(image) {
             return {alt: "<alt override>", src: "<src>"};
         })(image);
 
