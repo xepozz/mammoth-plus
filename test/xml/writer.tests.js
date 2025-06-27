@@ -3,8 +3,6 @@ var assert = require("assert");
 var xml = require("../../lib/xml");
 var writer = require("../../lib/xml/writer");
 
-
-
 it('writing empty root element writes out xml declaration and empty root element', function() {
     assertXmlString(xml.element("root"), {}, '<root/>');
 });

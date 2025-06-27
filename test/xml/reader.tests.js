@@ -2,8 +2,6 @@ var assert = require("assert");
 
 var xmlreader = require("../../lib/xml/reader");
 
-
-
 it('should read self-closing element', function() {
     return xmlreader.readString("<body/>").then(function(result) {
         assert.deepEqual({type: "element", name: "body", attributes: {}, children: []}, result);

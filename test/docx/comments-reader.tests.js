@@ -6,8 +6,6 @@ var stylesReader = require("../../lib/docx/styles-reader");
 var documents = require("../../lib/documents");
 var xml = require("../../lib/xml");
 
-
-
 function readComment(element) {
     var bodyReader = createBodyReader({styles: stylesReader.defaultStyles});
     var commentsReader = createCommentsReader(bodyReader);

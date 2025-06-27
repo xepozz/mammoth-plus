@@ -32,7 +32,7 @@ describe("mc:AlternateContent", function() {
           '</mc:Choice>' +
           '</mc:AlternateContent>' +
           '</numbering>';
-        return officeXmlReader.read(xmlString).then(function (element) {
+        return officeXmlReader.read(xmlString).then(function(element) {
             assert.deepEqual(element.children, []);
         });
     });

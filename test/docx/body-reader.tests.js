@@ -104,7 +104,7 @@ it("paragraph has justification read from paragraph properties if present", func
     assert.deepEqual(paragraph.alignment, "center");
 });
 
-describe("paragraph indent", function () {
+describe("paragraph indent", function() {
     it("when w:start is set then start indent is read from w:start", function() {
         var paragraphXml = paragraphWithIndent({"w:start": "720", "w:left": "40"});
         var paragraph = readXmlElementValue(paragraphXml);
@@ -763,7 +763,7 @@ describe("checkboxes", function() {
                 ])
             ])
         ]));
-    })
+    });
 
     it("when structured document tag checkbox has sdtContent then deleted content is ignored", function() {
         var tableXml = new XmlElement("w:tbl", {}, [
@@ -1596,7 +1596,7 @@ function assertChildrenAreConvertedNormally(tagName) {
     assert.deepEqual(result.value[0].type, "run");
 }
 
-describe("w:hyperlink", function () {
+describe("w:hyperlink", function() {
     it("is read as external hyperlink if it has a relationship ID", function() {
         var runXml = new XmlElement("w:r", {}, []);
         var hyperlinkXml = new XmlElement("w:hyperlink", {"r:id": "r42"}, [runXml]);
@@ -1752,7 +1752,7 @@ it("text boxes have content appended after containing paragraph", function() {
     assert.deepEqual(result.value[1].styleId, "textbox-content");
 });
 
-describe("mc:AlternateContent", function () {
+describe("mc:AlternateContent", function() {
     it("when mc:Fallback is present then mc:Fallback is read", function() {
         var styles = new Styles({"first": {name: "First"}, "second": {name: "Second"}}, {});
         var textbox = new XmlElement("mc:AlternateContent", {}, [

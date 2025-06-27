@@ -3,8 +3,6 @@ var assert = require("assert");
 var readContentTypesFromXml = require("../../lib/docx/content-types-reader").readContentTypesFromXml;
 var XmlElement = require("../../lib/xml").Element;
 
-
-
 it('reads default-per-extension from XML', function() {
     var contentTypes = readContentTypesFromXml(
         new XmlElement("content-types:Types", {}, [

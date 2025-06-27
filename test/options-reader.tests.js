@@ -6,8 +6,6 @@ var optionsReader = require("../lib/options-reader");
 var standardOptions = optionsReader._standardOptions;
 var readOptions = optionsReader.readOptions;
 
-
-
 it('standard options are used if options is undefined', function() {
     var options = readOptions(undefined);
     assert.deepEqual(standardOptions, _.omit(options, "customStyleMap", "readStyleMap"));

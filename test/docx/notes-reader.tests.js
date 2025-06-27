@@ -6,8 +6,6 @@ var stylesReader = require("../../lib/docx/styles-reader");
 var documents = require("../../lib/documents");
 var XmlElement = require("../../lib/xml").Element;
 
-
-
 it('ID and body of footnote are read', function() {
     var bodyReader = new createBodyReader({styles: stylesReader.defaultStyles});
     var footnoteBody = [new XmlElement("w:p", {}, [])];

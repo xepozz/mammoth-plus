@@ -3,8 +3,6 @@ var assert = require("assert");
 var results = require("../lib/results");
 var Result = results.Result;
 
-
-
 it("Result.combine removes any duplicate messages", function() {
     var first = new Result(null, [results.warning("Warning...")]);
     var second = new Result(null, [results.warning("Warning...")]);

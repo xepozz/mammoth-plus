@@ -5,16 +5,14 @@ var _ = require("underscore");
 var documents = require("../lib/documents");
 var transforms = require("../lib/transforms");
 
-
-
-describe("paragraph()", function () {
+describe("paragraph()", function() {
     it("paragraph is transformed", function() {
         var paragraph = documents.paragraph([]);
         var result = transforms.paragraph(function() {
             return documents.tab();
         })(paragraph);
         assert.deepEqual(result, documents.tab());
-    })
+    });
     
     it("non-paragraph elements are not transformed", function() {
         var run = documents.run([]);
@@ -22,18 +20,18 @@ describe("paragraph()", function () {
             return documents.tab();
         })(run);
         assert.deepEqual(result, documents.run([]));
-    })
+    });
 });
 
 
-describe("run()", function () {
+describe("run()", function() {
     it("run is transformed", function() {
         var run = documents.run([]);
         var result = transforms.run(function() {
             return documents.tab();
         })(run);
         assert.deepEqual(result, documents.tab());
-    })
+    });
     
     it("non-run elements are not transformed", function() {
         var paragraph = documents.paragraph([]);
@@ -41,11 +39,11 @@ describe("run()", function () {
             return documents.tab();
         })(paragraph);
         assert.deepEqual(result, documents.paragraph([]));
-    })
+    });
 });
 
 
-describe("elements()", function () {
+describe("elements()", function() {
     it("all descendants are transformed", function() {
         var root = {
             children: [
@@ -75,18 +73,18 @@ describe("elements()", function () {
                 }
             ]
         });
-    })
+    });
 });
 
 
-describe("getDescendants()", function () {
+describe("getDescendants()", function() {
     it("returns nothing if element has no children property", function() {
         assert.deepEqual(transforms.getDescendants({}), []);
-    })
+    });
     
     it("returns nothing if element has empty children", function() {
         assert.deepEqual(transforms.getDescendants({children: []}), []);
-    })
+    });
     
     it("includes children", function() {
         var element = {
@@ -96,7 +94,7 @@ describe("getDescendants()", function () {
             transforms.getDescendants(element),
             [{name: "child 1"}, {name: "child 2"}]
         );
-    })
+    });
     
     it("includes indirect descendants", function() {
         var grandchild = {name: "grandchild"};
@@ -106,7 +104,7 @@ describe("getDescendants()", function () {
             transforms.getDescendants(element),
             [grandchild, child]
         );
-    })
+    });
 });
 
 

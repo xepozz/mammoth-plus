@@ -3,8 +3,6 @@ var assert = require("assert");
 var readRelationships = require("../../lib/docx/relationships-reader").readRelationships;
 var xml = require("../../lib/xml");
 
-
-
 it("relationships can be found by ID", function() {
     var relationships = readRelationships(relationshipsElement([
         relationshipElement({

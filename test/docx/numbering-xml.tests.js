@@ -5,8 +5,6 @@ var readNumberingXml = require("../../lib/docx/numbering-xml").readNumberingXml;
 var stylesReader = require("../../lib/docx/styles-reader");
 var XmlElement = require("../../lib/xml").Element;
 
-
-
 it('w:num element inherits levels from w:abstractNum', function() {
     var numbering = readNumberingXml(
         new XmlElement("w:numbering", {}, [
