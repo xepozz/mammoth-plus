@@ -7,41 +7,49 @@ var assertThat = hamjest.assertThat;
 var promiseThat = hamjest.promiseThat;
 var allOf = hamjest.allOf;
 var contains = hamjest.contains;
+var equalTo = hamjest.equalTo;
 var hasProperties = hamjest.hasProperties;
 var willBe = hamjest.willBe;
 var FeatureMatcher = hamjest.FeatureMatcher;
 
 var documentMatchers = require("./document-matchers");
 var isEmptyRun = documentMatchers.isEmptyRun;
+var isCheckbox = documentMatchers.isCheckbox;
 var isHyperlink = documentMatchers.isHyperlink;
 var isRun = documentMatchers.isRun;
 var isText = documentMatchers.isText;
 var isTable = documentMatchers.isTable;
 var isRow = documentMatchers.isRow;
 
-var createBodyReader = require("../../lib/docx/body-reader").createBodyReader;
 var _readNumberingProperties = require("../../lib/docx/body-reader")._readNumberingProperties;
 var documents = require("../../lib/documents");
 var xml = require("../../lib/xml");
 var XmlElement = xml.Element;
-var defaultNumbering = require("../../lib/docx/numbering-xml").defaultNumbering;
 var Relationships = require("../../lib/docx/relationships-reader").Relationships;
 var Styles = require("../../lib/docx/styles-reader").Styles;
 var warning = require("../../lib/results").warning;
 
 var testing = require("../testing");
 var test = require("../test")(module);
+var createBodyReaderForTests = require("./testing").createBodyReaderForTests;
 var createFakeDocxFile = testing.createFakeDocxFile;
 
 function readXmlElement(element, options) {
-    options = Object.create(options || {});
-    options.styles = options.styles || new Styles({}, {});
-    options.numbering = options.numbering || defaultNumbering;
-    return createBodyReader(options).readXmlElement(element);
+    return createBodyReaderForTests(options).readXmlElement(element);
+}
+
+function readXmlElements(element, options) {
+    return createBodyReaderForTests(options).readXmlElements(element);
 }
 
 function readXmlElementValue(element, options) {
     var result = readXmlElement(element, options);
+    assert.deepEqual(result.messages, []);
+    return result.value;
+}
+
+function readXmlElementsValue(elements, options) {
+    var result = readXmlElements(elements, options);
     assert.deepEqual(result.messages, []);
     return result.value;
 }
@@ -165,7 +173,22 @@ test("paragraph has numbering properties from paragraph properties if present", 
     assert.deepEqual(paragraph.numbering, {level: "1", isOrdered: true});
 });
 
-test("numbering on paragraph style takes precedence over numPr", function() {
+test("paragraph has numbering from paragraph style if present", function() {
+    var propertiesXml = new XmlElement("w:pPr", {}, [
+        new XmlElement("w:pStyle", {"w:val": "List"})
+    ]);
+    var paragraphXml = new XmlElement("w:p", {}, [propertiesXml]);
+
+    var numbering = new NumberingMap({
+        findLevelByParagraphStyleId: {"List": {isOrdered: true, level: "1"}}
+    });
+    var styles = new Styles({"List": {name: "List"}}, {});
+
+    var paragraph = readXmlElementValue(paragraphXml, {numbering: numbering, styles: styles});
+    assert.deepEqual(paragraph.numbering, {level: "1", isOrdered: true});
+});
+
+test("numbering properties in paragraph properties takes precedence over numbering in paragraph style", function() {
     var numberingPropertiesXml = new XmlElement("w:numPr", {}, [
         new XmlElement("w:ilvl", {"w:val": "1"}),
         new XmlElement("w:numId", {"w:val": "42"})
@@ -177,7 +200,8 @@ test("numbering on paragraph style takes precedence over numPr", function() {
     var paragraphXml = new XmlElement("w:p", {}, [propertiesXml]);
 
     var numbering = new NumberingMap({
-        findLevelByParagraphStyleId: {"List": {isOrdered: true, level: "1"}}
+        findLevel: {"42": {"1": {isOrdered: true, level: "1"}}},
+        findLevelByParagraphStyleId: {"List": {isOrdered: true, level: "2"}}
     });
     var styles = new Styles({"List": {name: "List"}}, {});
 
@@ -223,6 +247,57 @@ test("numbering properties are ignored if w:numId is missing", function() {
 
     var numberingLevel = _readNumberingProperties(null, numberingPropertiesXml, numbering);
     assert.equal(numberingLevel, null);
+});
+
+test("content of deleted paragraph is prepended to next paragraph", function() {
+    var styles = new Styles(
+        {
+            "Heading1": {name: "Heading 1"},
+            "Heading2": {name: "Heading 2"}
+        },
+        {}
+    );
+    var bodyXml = [
+        new XmlElement("w:p", {}, [
+            new XmlElement("w:pPr", {}, [
+                new XmlElement("w:pStyle", {"w:val": "Heading1"}, []),
+                new XmlElement("w:rPr", {}, [
+                    new XmlElement("w:del")
+                ])
+            ]),
+            runOfText("One")
+        ]),
+        new XmlElement("w:p", {}, [
+            new XmlElement("w:pPr", {}, [
+                new XmlElement("w:pStyle", {"w:val": "Heading2"}, [])
+            ]),
+            runOfText("Two")
+        ]),
+        // Include a second paragraph that isn't deleted to ensure we only add
+        // the deleted paragraph contents once.
+        new XmlElement("w:p", {}, [
+            runOfText("Three")
+        ])
+    ];
+
+    var result = readXmlElementsValue(bodyXml, {styles: styles});
+
+    assertThat(result, contains(
+        hasProperties({
+            type: documents.types.paragraph,
+            styleId: "Heading2",
+            children: contains(
+                documents.run([documents.text("One")]),
+                documents.run([documents.text("Two")])
+            )
+        }),
+        hasProperties({
+            type: documents.types.paragraph,
+            children: contains(
+                documents.run([documents.text("Three")])
+            )
+        })
+    ));
 });
 
 test("complex fields", (function() {
@@ -456,6 +531,306 @@ test("complex fields", (function() {
     };
 })());
 
+test("checkboxes", {
+    "complex field checkbox without separate is read": function() {
+        var paragraphXml = xml.element("w:p", {}, [
+            xml.element("w:r", {}, [
+                xml.element("w:fldChar", {"w:fldCharType": "begin"})
+            ]),
+            xml.element("w:instrText", {}, [
+                xml.text(' FORMCHECKBOX ')
+            ]),
+            xml.element("w:r", {}, [
+                xml.element("w:fldChar", {"w:fldCharType": "end"})
+            ])
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox()
+                )
+            })
+        ));
+    },
+
+    "complex field checkbox with separate is read": function() {
+        var paragraphXml = xml.element("w:p", {}, [
+            xml.element("w:r", {}, [
+                xml.element("w:fldChar", {"w:fldCharType": "begin"})
+            ]),
+            xml.element("w:instrText", {}, [
+                xml.text(' FORMCHECKBOX ')
+            ]),
+            xml.element("w:r", {}, [
+                xml.element("w:fldChar", {"w:fldCharType": "separate"})
+            ]),
+            xml.element("w:r", {}, [
+                xml.element("w:fldChar", {"w:fldCharType": "end"})
+            ])
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox()
+                )
+            })
+        ));
+    },
+
+    "complex field checkbox without w:default nor w:checked is unchecked": function() {
+        var paragraphXml = complexFieldCheckboxParagraph([
+            xml.element("w:checkBox")
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox({checked: equalTo(false)})
+                )
+            })
+        ));
+    },
+
+    "complex field checkbox with w:default=0 and without w:checked is unchecked": function() {
+        var paragraphXml = complexFieldCheckboxParagraph([
+            xml.element("w:checkBox", {}, [
+                xml.element("w:default", {"w:val": "0"})
+            ])
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox({checked: equalTo(false)})
+                )
+            })
+        ));
+    },
+
+    "complex field checkbox with w:default=1 and without w:checked is checked": function() {
+        var paragraphXml = complexFieldCheckboxParagraph([
+            xml.element("w:checkBox", {}, [
+                xml.element("w:default", {"w:val": "1"})
+            ])
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox({checked: equalTo(true)})
+                )
+            })
+        ));
+    },
+
+    "complex field checkbox with w:default=1 and w:checked=0 is unchecked": function() {
+        var paragraphXml = complexFieldCheckboxParagraph([
+            xml.element("w:checkBox", {}, [
+                xml.element("w:default", {"w:val": "1"}),
+                xml.element("w:checked", {"w:val": "0"})
+            ])
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox({checked: equalTo(false)})
+                )
+            })
+        ));
+    },
+
+    "complex field checkbox with w:default=0 and w:checked=1 is checked": function() {
+        var paragraphXml = complexFieldCheckboxParagraph([
+            xml.element("w:checkBox", {}, [
+                xml.element("w:default", {"w:val": "0"}),
+                xml.element("w:checked", {"w:val": "1"})
+            ])
+        ]);
+
+        var paragraph = readXmlElementValue(paragraphXml);
+
+        assertThat(paragraph.children, contains(
+            isEmptyRun,
+            isEmptyRun,
+            isRun({
+                children: contains(
+                    isCheckbox({checked: equalTo(true)})
+                )
+            })
+        ));
+    },
+
+    "structured document tag checkbox without checked is not checked": function() {
+        var sdtXml = xml.element("w:sdt", {}, [
+            xml.element("w:sdtPr", {}, [
+                xml.element("wordml:checkbox")
+            ])
+        ]);
+
+        var result = readXmlElementValue(sdtXml);
+
+        assertThat(result, isCheckbox({checked: equalTo(false)}));
+    },
+
+    "structured document tag checkbox with checked=0 is not checked": function() {
+        var sdtXml = xml.element("w:sdt", {}, [
+            xml.element("w:sdtPr", {}, [
+                xml.element("wordml:checkbox", {}, [
+                    xml.element("wordml:checked", {"wordml:val": "0"})
+                ])
+            ])
+        ]);
+
+        var result = readXmlElementValue(sdtXml);
+
+        assertThat(result, isCheckbox({checked: equalTo(false)}));
+    },
+
+    "structured document tag checkbox with checked=1 is checked": function() {
+        var sdtXml = xml.element("w:sdt", {}, [
+            xml.element("w:sdtPr", {}, [
+                xml.element("wordml:checkbox", {}, [
+                    xml.element("wordml:checked", {"wordml:val": "1"})
+                ])
+            ])
+        ]);
+
+        var result = readXmlElementValue(sdtXml);
+
+        assertThat(result, isCheckbox({checked: equalTo(true)}));
+    },
+
+    "when structured document tag checkbox has sdtContent then checkbox replaces single character": function() {
+        var tableXml = new XmlElement("w:tbl", {}, [
+            row(
+                xml.element("w:sdt", {}, [
+                    xml.element("w:sdtPr", {}, [
+                        xml.element("wordml:checkbox", {}, [
+                            xml.element("wordml:checked", {"wordml:val": "1"})
+                        ])
+                    ]),
+                    xml.element("w:sdtContent", {}, [
+                        xml.element("w:tc", {}, [
+                            xml.element("w:p", {}, [
+                                xml.element("w:r", {}, [
+                                    xml.element("w:t", {}, [
+                                        xml.text("☐")
+                                    ])
+                                ])
+                            ])
+                        ])
+                    ])
+                ])
+            )
+        ]);
+
+        var result = readXmlElementValue(tableXml);
+
+        assert.deepEqual(result, new documents.Table([
+            new documents.TableRow([
+                new documents.TableCell([
+                    new documents.Paragraph([
+                        new documents.Run([
+                            new documents.Checkbox({checked: true})
+                        ])
+                    ])
+                ])
+            ])
+        ]));
+    },
+
+    "when structured document tag checkbox has sdtContent then deleted content is ignored": function() {
+        var tableXml = new XmlElement("w:tbl", {}, [
+            row(
+                xml.element("w:sdt", {}, [
+                    xml.element("w:sdtPr", {}, [
+                        xml.element("wordml:checkbox", {}, [
+                            xml.element("wordml:checked", {"wordml:val": "1"})
+                        ])
+                    ]),
+                    xml.element("w:sdtContent", {}, [
+                        xml.element("w:tc", {}, [
+                            xml.element("w:p", {}, [
+                                xml.element("w:r", {}, [
+                                    xml.element("w:t", {}, [
+                                        xml.text("☐")
+                                    ])
+                                ]),
+                                xml.element("w:del", {}, [
+                                    xml.element("w:r", {}, [
+                                        xml.element("w:t", {}, [
+                                            xml.text("☐")
+                                        ])
+                                    ])
+                                ])
+                            ])
+                        ])
+                    ])
+                ])
+            )
+        ]);
+
+        var result = readXmlElementValue(tableXml);
+
+        assert.deepEqual(result, new documents.Table([
+            new documents.TableRow([
+                new documents.TableCell([
+                    new documents.Paragraph([
+                        new documents.Run([
+                            new documents.Checkbox({checked: true})
+                        ])
+                    ])
+                ])
+            ])
+        ]));
+    }
+});
+
+function complexFieldCheckboxParagraph(ffDataChildren) {
+    return xml.element("w:p", {}, [
+        xml.element("w:r", {}, [
+            xml.element("w:fldChar", {"w:fldCharType": "begin"}, [
+                xml.element("w:ffData", {}, ffDataChildren)
+            ])
+        ]),
+        xml.element("w:instrText", {}, [
+            xml.text(' FORMCHECKBOX ')
+        ]),
+        xml.element("w:r", {}, [
+            xml.element("w:fldChar", {"w:fldCharType": "separate"})
+        ]),
+        xml.element("w:r", {}, [
+            xml.element("w:fldChar", {"w:fldCharType": "end"})
+        ])
+    ]);
+}
+
 test("run has no style if it has no properties", function() {
     var runXml = runWithProperties([]);
     var run = readXmlElementValue(runXml);
@@ -677,6 +1052,29 @@ test("run with invalid w:sz has null font size", function() {
     assert.deepEqual(run.fontSize, null);
 });
 
+test("run has no highlight by default", function() {
+    var runXml = runWithProperties([]);
+
+    var run = readXmlElementValue(runXml);
+    assert.deepEqual(run.highlight, null);
+});
+
+test("run has highlight read from properties", function() {
+    var highlightXml = new XmlElement("w:highlight", {"w:val": "yellow"});
+    var runXml = runWithProperties([highlightXml]);
+
+    var run = readXmlElementValue(runXml);
+    assert.deepEqual(run.highlight, "yellow");
+});
+
+test("when highlight is none then run has no highlight", function() {
+    var highlightXml = new XmlElement("w:highlight", {"w:val": "none"});
+    var runXml = runWithProperties([highlightXml]);
+
+    var run = readXmlElementValue(runXml);
+    assert.deepEqual(run.highlight, null);
+});
+
 test("run properties not included as child of run", function() {
     var runStyleXml = new XmlElement("w:rStyle");
     var runPropertiesXml = new XmlElement("w:rPr", {}, [runStyleXml]);
@@ -866,6 +1264,43 @@ test("no vertical cell merging if merged cells do not line up", function() {
     assert.deepEqual(result.value, new documents.Table([
         docRow([docEmptyCell({colSpan: 2})]),
         docRow([docEmptyCell(), docEmptyCell()])
+    ]));
+});
+
+test("when row is marked as deleted in row properties then row is ignored", function() {
+    var tableXml = xml.element("w:tbl", {}, [
+        xml.element("w:tr", {}, [
+            xml.element("w:tc", {}, [
+                xml.element("w:p", {}, [
+                    runOfText("Row 1")
+                ])
+            ])
+        ]),
+
+        xml.element("w:tr", {}, [
+            xml.element("w:trPr", {}, [
+                xml.element("w:del")
+            ]),
+            xml.element("w:tc", {}, [
+                xml.element("w:p", {}, [
+                    runOfText("Row 2")
+                ])
+            ])
+        ])
+    ]);
+
+    var result = readXmlElement(tableXml);
+
+    assert.deepEqual(result.value, new documents.Table([
+        new documents.TableRow([
+            new documents.TableCell([
+                new documents.Paragraph([
+                    new documents.Run([
+                        new documents.Text("Row 1")
+                    ])
+                ])
+            ])
+        ])
     ]));
 });
 
@@ -1317,18 +1752,30 @@ test("text boxes have content appended after containing paragraph", function() {
     assert.deepEqual(result.value[1].styleId, "textbox-content");
 });
 
-test("mc:Fallback is used when mc:AlternateContent is read", function() {
-    var styles = new Styles({"first": {name: "First"}, "second": {name: "Second"}}, {});
-    var textbox = new XmlElement("mc:AlternateContent", {}, [
-        new XmlElement("mc:Choice", {"Requires": "wps"}, [
-            paragraphWithStyleId("first")
-        ]),
-        new XmlElement("mc:Fallback", {}, [
-            paragraphWithStyleId("second")
-        ])
-    ]);
-    var result = readXmlElement(textbox, {styles: styles});
-    assert.deepEqual(result.value[0].styleId, "second");
+test("mc:AlternateContent", {
+    "when mc:Fallback is present then mc:Fallback is read": function() {
+        var styles = new Styles({"first": {name: "First"}, "second": {name: "Second"}}, {});
+        var textbox = new XmlElement("mc:AlternateContent", {}, [
+            new XmlElement("mc:Choice", {"Requires": "wps"}, [
+                paragraphWithStyleId("first")
+            ]),
+            new XmlElement("mc:Fallback", {}, [
+                paragraphWithStyleId("second")
+            ])
+        ]);
+        var result = readXmlElement(textbox, {styles: styles});
+        assert.deepEqual(result.value[0].styleId, "second");
+    },
+
+    "when mc:Fallback is not present then element is ignored": function() {
+        var textbox = new XmlElement("mc:AlternateContent", {}, [
+            new XmlElement("mc:Choice", {"Requires": "wps"}, [
+                paragraphWithStyleId("first")
+            ])
+        ]);
+        var result = readXmlElement(textbox);
+        assert.deepEqual(result.value, []);
+    }
 });
 
 test("w:sdtContent is used when w:sdt is read", function() {

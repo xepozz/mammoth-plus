@@ -59,6 +59,8 @@ to generate a standalone JavaScript file for the browser,
 use `mammoth-plus.min.js` (generate using `make setup` if it is not already present).
 `mammothPlus` is set as a window global.
 
+The file can be generated using `make setup` during development.
+
 #### Basic conversion
 
 To convert an existing .docx file to HTML, use `mammothPlus.convertToHtml`:
@@ -75,7 +77,9 @@ mammothPlus
         var html = result.value // The generated HTML
         var messages = result.messages // Any messages, such as warnings during conversion
     })
-    .done()
+    .catch(function(error) {
+        console.error(error);
+    });
 ```
 
 Note that `mammothPlus.convertToHtml` returns a [promise](http://promises-aplus.github.io/promises-spec/).
@@ -94,7 +98,9 @@ mammothPlus
         var text = result.value // The raw text
         var messages = result.messages
     })
-    .done()
+    .catch(function(error) {
+        console.error(error);
+    });
 ```
 
 #### Custom style map
@@ -443,8 +449,9 @@ it will use the embedded style map.
 
 -   `styleMap`: the style map to embed.
 
--   Returns a promise.
-    Call `toBuffer()` on the value inside the promise to get a `Buffer` representing the new document.
+* Returns a promise.
+  Call `toArrayBuffer()` on the value inside the promise to get an `ArrayBuffer` representing the new document.
+  Call `toBuffer()` on the value inside the promise to get a `Buffer` representing the new document.
 
 For instance:
 
@@ -478,10 +485,21 @@ This creates an `<img>` element for each image in the original docx.
 This argument is the image element being converted,
 and has the following properties:
 
--   `read([encoding])`: read the image file with the specified encoding.
-    If no encoding is specified, a `Buffer` is returned.
+* `contentType`: the content type of the image, such as `image/png`.
 
--   `contentType`: the content type of the image, such as `image/png`.
+* `readAsArrayBuffer()`: read the image file as an `ArrayBuffer`.
+  Returns a promise of an `ArrayBuffer`.
+
+* `readAsBuffer()`: read the image file as a `Buffer`.
+  Returns a promise of a `Buffer`.
+  This is not supported in browsers unless a `Buffer` polyfill has been used.
+
+* `readAsBase64String()`: read the image file as a base64-encoded string.
+  Returns a promise of a `string`.
+
+* `read([encoding])` (deprecated): read the image file with the specified encoding.
+  If an encoding is specified, a promise of a `string` is returned.
+  If no encoding is specified, a promise of a `Buffer` is returned.
 
 `func` should return an object (or a promise of an object) of attributes for the `<img>` element.
 At a minimum, this should include the `src` attribute.
@@ -491,8 +509,8 @@ this will be automatically added to the element's attributes.
 For instance, the following replicates the default image conversion:
 
 ```javascript
-mammothPlus.images.imgElement(function (image) {
-    return image.read('base64').then(function (imageBuffer) {
+mammothPlus.images.imgElement(function(image) {
+    return image.readAsBase64String().then(function(imageBuffer) {
         return {
             src: 'data:' + image.contentType + ';base64,' + imageBuffer
         }
@@ -773,6 +791,43 @@ small-caps
 Note that this matches text that has had small caps explicitly applied to it.
 It will not match any text that is small caps because of its paragraph or run style.
 
+#### Highlight
+
+Match explicitly highlighted text:
+
+```
+highlight
+```
+
+Note that this matches text that has had a highlight explicitly applied to it.
+It will not match any text that is highlighted because of its paragraph or run style.
+
+It's also possible to match specific colours.
+For instance, to match yellow highlights:
+
+```
+highlight[color='yellow']
+```
+
+The set of colours typically used are:
+
+* `black`
+* `blue`
+* `cyan`
+* `green`
+* `magenta`
+* `red`
+* `yellow`
+* `white`
+* `darkBlue`
+* `darkCyan`
+* `darkGreen`
+* `darkMagenta`
+* `darkRed`
+* `darkYellow`
+* `darkGray`
+* `lightGray`
+
 #### Ignoring document elements
 
 Use `!` to ignore a document element.
@@ -798,6 +853,12 @@ append a dot followed by the name of the class:
 
 ```
 h1.section-title
+```
+
+To add an attribute, use square brackets similarly to a CSS attribute selector:
+
+```
+p[lang='fr']
 ```
 
 To require that an element is fresh, use `:fresh`:
