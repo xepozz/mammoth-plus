@@ -4,9 +4,9 @@ var JSZip = require("jszip");
 
 var zipfile = require("../../lib/zipfile");
 var styleMap = require("../../lib/docx/style-map");
-var test = require("../test")(module);
 
-test('reading embedded style map on document without embedded style map returns null', function() {
+
+it('reading embedded style map on document without embedded style map returns null', function() {
     return normalDocx().then(function(zip) {
         return styleMap.readStyleMap(zip).then(function(contents) {
             assert.equal(contents, null);
@@ -14,7 +14,7 @@ test('reading embedded style map on document without embedded style map returns 
     });
 });
 
-test('embedded style map can be read after being written', function() {
+it('embedded style map can be read after being written', function() {
     return normalDocx().then(function(zip) {
         return styleMap.writeStyleMap(zip, "p => h1").then(function() {
             return styleMap.readStyleMap(zip).then(function(contents) {
@@ -24,7 +24,7 @@ test('embedded style map can be read after being written', function() {
     });
 });
 
-test('embedded style map is written to separate file', function() {
+it('embedded style map is written to separate file', function() {
     return normalDocx().then(function(zip) {
         return styleMap.writeStyleMap(zip, "p => h1").then(function() {
             return zip.read("mammoth-plus/style-map", "utf8").then(function(contents) {
@@ -34,7 +34,7 @@ test('embedded style map is written to separate file', function() {
     });
 });
 
-test('embedded style map is referenced in relationships', function() {
+it('embedded style map is referenced in relationships', function() {
     return normalDocx().then(function(zip) {
         return styleMap.writeStyleMap(zip, "p => h1").then(function() {
             return zip.read("word/_rels/document.xml.rels", "utf8").then(function(contents) {
@@ -44,7 +44,7 @@ test('embedded style map is referenced in relationships', function() {
     });
 });
 
-test('re-embedding style map replaces original', function() {
+it('re-embedding style map replaces original', function() {
     return normalDocx().then(function(zip) {
         return styleMap.writeStyleMap(zip, "p => h1").then(function() {
             return styleMap.writeStyleMap(zip, "p => h2");
@@ -60,7 +60,7 @@ test('re-embedding style map replaces original', function() {
     });
 });
 
-test('embedded style map has override content type in [Content_Types].xml', function() {
+it('embedded style map has override content type in [Content_Types].xml', function() {
     return normalDocx().then(function(zip) {
         return styleMap.writeStyleMap(zip, "p => h1").then(function() {
             return zip.read("[Content_Types].xml", "utf8").then(function(contents) {
@@ -70,7 +70,7 @@ test('embedded style map has override content type in [Content_Types].xml', func
     });
 });
 
-test('replacing style map keeps content type', function() {
+it('replacing style map keeps content type', function() {
     return normalDocx().then(function(zip) {
         return styleMap.writeStyleMap(zip, "p => h1").then(function() {
             return styleMap.writeStyleMap(zip, "p => h2");

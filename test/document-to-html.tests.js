@@ -5,7 +5,7 @@ var documents = require("../lib/documents");
 var documentToHtml = require("../lib/document-to-html");
 var DocumentConverter = documentToHtml.DocumentConverter;
 var commentAuthorLabel = documentToHtml.commentAuthorLabel;
-var test = require("./test")(module);
+
 var htmlPaths = require("../lib/styles/html-paths");
 var xml = require("../lib/xml");
 var results = require("../lib/results");
@@ -13,7 +13,7 @@ var documentMatchers = require("../lib/styles/document-matchers");
 var Html = require("../lib/html");
 
 
-test('should empty document to empty string', function() {
+it('should empty document to empty string', function() {
     var document = new documents.Document([]);
     var converter = new DocumentConverter();
     return converter.convertToHtml(document).then(function(result) {
@@ -21,7 +21,7 @@ test('should empty document to empty string', function() {
     });
 });
 
-test('should convert document containing one paragraph to single p element', function() {
+it('should convert document containing one paragraph to single p element', function() {
     var document = new documents.Document([
         paragraphOfText("Hello.")
     ]);
@@ -31,7 +31,7 @@ test('should convert document containing one paragraph to single p element', fun
     });
 });
 
-test('ignores empty paragraphs', function() {
+it('ignores empty paragraphs', function() {
     var document = new documents.Document([
         paragraphOfText("")
     ]);
@@ -41,7 +41,7 @@ test('ignores empty paragraphs', function() {
     });
 });
 
-test('text is HTML-escaped', function() {
+it('text is HTML-escaped', function() {
     var document = new documents.Document([
         paragraphOfText("1 < 2")
     ]);
@@ -51,7 +51,7 @@ test('text is HTML-escaped', function() {
     });
 });
 
-test('should convert document containing multiple paragraphs to multiple p elements', function() {
+it('should convert document containing multiple paragraphs to multiple p elements', function() {
     var document = new documents.Document([
         paragraphOfText("Hello."),
         paragraphOfText("Goodbye.")
@@ -62,7 +62,7 @@ test('should convert document containing multiple paragraphs to multiple p eleme
     });
 });
 
-test('uses style mappings to pick HTML element for docx paragraph', function() {
+it('uses style mappings to pick HTML element for docx paragraph', function() {
     var document = new documents.Document([
         paragraphOfText("Hello.", "Heading1", "Heading 1")
     ]);
@@ -79,7 +79,7 @@ test('uses style mappings to pick HTML element for docx paragraph', function() {
     });
 });
 
-test('mappings for style names are case insensitive', function() {
+it('mappings for style names are case insensitive', function() {
     var document = new documents.Document([
         paragraphOfText("Hello.", "Heading1", "heading 1")
     ]);
@@ -96,7 +96,7 @@ test('mappings for style names are case insensitive', function() {
     });
 });
 
-test('can use non-default HTML element for unstyled paragraphs', function() {
+it('can use non-default HTML element for unstyled paragraphs', function() {
     var document = new documents.Document([
         paragraphOfText("Hello.")
     ]);
@@ -113,7 +113,7 @@ test('can use non-default HTML element for unstyled paragraphs', function() {
     });
 });
 
-test('warning is emitted if paragraph style is unrecognised', function() {
+it('warning is emitted if paragraph style is unrecognised', function() {
     var document = new documents.Document([
         paragraphOfText("Hello.", "Heading1", "Heading 1")
     ]);
@@ -123,7 +123,7 @@ test('warning is emitted if paragraph style is unrecognised', function() {
     });
 });
 
-test('can use stacked styles to generate nested HTML elements', function() {
+it('can use stacked styles to generate nested HTML elements', function() {
     var document = new documents.Document([
         paragraphOfText("Hello.")
     ]);
@@ -140,7 +140,7 @@ test('can use stacked styles to generate nested HTML elements', function() {
     });
 });
 
-test('bold runs are wrapped in <strong> tags by default', function() {
+it('bold runs are wrapped in <strong> tags by default', function() {
     var run = runOfText("Hello.", {isBold: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -148,7 +148,7 @@ test('bold runs are wrapped in <strong> tags by default', function() {
     });
 });
 
-test('bold runs can be configured with style mapping', function() {
+it('bold runs can be configured with style mapping', function() {
     var run = runOfText("Hello.", {isBold: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -163,7 +163,7 @@ test('bold runs can be configured with style mapping', function() {
     });
 });
 
-test('bold runs can exist inside other tags', function() {
+it('bold runs can exist inside other tags', function() {
     var run = new documents.Paragraph([
         runOfText("Hello.", {isBold: true})
     ]);
@@ -173,7 +173,7 @@ test('bold runs can exist inside other tags', function() {
     });
 });
 
-test('consecutive bold runs are wrapped in a single <strong> element', function() {
+it('consecutive bold runs are wrapped in a single <strong> element', function() {
     var paragraph = new documents.Paragraph([
         runOfText("Hello", {isBold: true}),
         runOfText(".", {isBold: true})
@@ -184,7 +184,7 @@ test('consecutive bold runs are wrapped in a single <strong> element', function(
     });
 });
 
-test('underline runs are ignored by default', function() {
+it('underline runs are ignored by default', function() {
     var run = runOfText("Hello.", {isUnderline: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -192,7 +192,7 @@ test('underline runs are ignored by default', function() {
     });
 });
 
-test('underline runs can be mapped using style mapping', function() {
+it('underline runs can be mapped using style mapping', function() {
     var run = runOfText("Hello.", {isUnderline: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -207,7 +207,7 @@ test('underline runs can be mapped using style mapping', function() {
     });
 });
 
-test('style mapping for underline runs does not close parent elements', function() {
+it('style mapping for underline runs does not close parent elements', function() {
     var run = runOfText("Hello.", {isUnderline: true, isBold: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -222,7 +222,7 @@ test('style mapping for underline runs does not close parent elements', function
     });
 });
 
-test('strikethrough runs are wrapped in <s> tags by default', function() {
+it('strikethrough runs are wrapped in <s> tags by default', function() {
     var run = runOfText("Hello.", {isStrikethrough: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -230,7 +230,7 @@ test('strikethrough runs are wrapped in <s> tags by default', function() {
     });
 });
 
-test('strikethrough runs can be configured with style mapping', function() {
+it('strikethrough runs can be configured with style mapping', function() {
     var run = runOfText("Hello.", {isStrikethrough: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -245,7 +245,7 @@ test('strikethrough runs can be configured with style mapping', function() {
     });
 });
 
-test('italic runs are wrapped in <em> tags', function() {
+it('italic runs are wrapped in <em> tags', function() {
     var run = runOfText("Hello.", {isItalic: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -253,7 +253,7 @@ test('italic runs are wrapped in <em> tags', function() {
     });
 });
 
-test('italic runs can be configured with style mapping', function() {
+it('italic runs can be configured with style mapping', function() {
     var run = runOfText("Hello.", {isItalic: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -268,7 +268,7 @@ test('italic runs can be configured with style mapping', function() {
     });
 });
 
-test('run can be both bold and italic', function() {
+it('run can be both bold and italic', function() {
     var run = runOfText("Hello.", {isBold: true, isItalic: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -276,7 +276,7 @@ test('run can be both bold and italic', function() {
     });
 });
 
-test('superscript runs are wrapped in <sup> tags', function() {
+it('superscript runs are wrapped in <sup> tags', function() {
     var run = runOfText("Hello.", {
         verticalAlignment: documents.verticalAlignment.superscript
     });
@@ -286,7 +286,7 @@ test('superscript runs are wrapped in <sup> tags', function() {
     });
 });
 
-test('subscript runs are wrapped in <sub> tags', function() {
+it('subscript runs are wrapped in <sub> tags', function() {
     var run = runOfText("Hello.", {
         verticalAlignment: documents.verticalAlignment.subscript
     });
@@ -296,7 +296,7 @@ test('subscript runs are wrapped in <sub> tags', function() {
     });
 });
 
-test('all caps runs are ignored by default', function() {
+it('all caps runs are ignored by default', function() {
     var run = runOfText("Hello.", {isAllCaps: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -304,7 +304,7 @@ test('all caps runs are ignored by default', function() {
     });
 });
 
-test('all caps runs can be configured with style mapping', function() {
+it('all caps runs can be configured with style mapping', function() {
     var run = runOfText("Hello.", {isAllCaps: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -320,7 +320,7 @@ test('all caps runs can be configured with style mapping', function() {
 });
 
 
-test('small caps runs are ignored by default', function() {
+it('small caps runs are ignored by default', function() {
     var run = runOfText("Hello.", {isSmallCaps: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -328,7 +328,7 @@ test('small caps runs are ignored by default', function() {
     });
 });
 
-test('small caps runs can be configured with style mapping', function() {
+it('small caps runs can be configured with style mapping', function() {
     var run = runOfText("Hello.", {isSmallCaps: true});
     var converter = new DocumentConverter({
         styleMap: [
@@ -344,7 +344,7 @@ test('small caps runs can be configured with style mapping', function() {
 });
 
 
-test('highlighted runs are ignored by default', function() {
+it('highlighted runs are ignored by default', function() {
     var run = runOfText("Hello.", {highlight: "yellow"});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -352,7 +352,7 @@ test('highlighted runs are ignored by default', function() {
     });
 });
 
-test('highlighted runs can be configured with style mapping for all highlights', function() {
+it('highlighted runs can be configured with style mapping for all highlights', function() {
     var run = runOfText("Hello.", {highlight: "yellow"});
     var converter = new DocumentConverter({
         styleMap: [
@@ -367,7 +367,7 @@ test('highlighted runs can be configured with style mapping for all highlights',
     });
 });
 
-test('highlighted runs can be configured with style mapping for specific highlight color', function() {
+it('highlighted runs can be configured with style mapping for specific highlight color', function() {
     var paragraph = new documents.Paragraph([
         runOfText("Yellow", {highlight: "yellow"}),
         runOfText("Red", {highlight: "red"})
@@ -390,7 +390,7 @@ test('highlighted runs can be configured with style mapping for specific highlig
 });
 
 
-test('run styles are converted to HTML if mapping exists', function() {
+it('run styles are converted to HTML if mapping exists', function() {
     var run = runOfText("Hello.", {styleId: "Heading1Char", styleName: "Heading 1 Char"});
     var converter = new DocumentConverter({
         styleMap: [
@@ -405,7 +405,7 @@ test('run styles are converted to HTML if mapping exists', function() {
     });
 });
 
-test('warning is emitted if run style is unrecognised', function() {
+it('warning is emitted if run style is unrecognised', function() {
     var run = runOfText("Hello.", {styleId: "Heading1Char", styleName: "Heading 1 Char"});
     var converter = new DocumentConverter();
     return converter.convertToHtml(run).then(function(result) {
@@ -413,7 +413,7 @@ test('warning is emitted if run style is unrecognised', function() {
     });
 });
 
-test('docx hyperlink is converted to <a>', function() {
+it('docx hyperlink is converted to <a>', function() {
     var hyperlink = new documents.Hyperlink(
         [runOfText("Hello.")],
         {href: "http://www.example.com"}
@@ -424,7 +424,7 @@ test('docx hyperlink is converted to <a>', function() {
     });
 });
 
-test('docx hyperlink can be collapsed', function() {
+it('docx hyperlink can be collapsed', function() {
     var hyperlink = new documents.Document([
         new documents.Hyperlink(
             [runOfText("Hello ")],
@@ -441,7 +441,7 @@ test('docx hyperlink can be collapsed', function() {
     });
 });
 
-test('docx hyperlink with anchor is converted to <a>', function() {
+it('docx hyperlink with anchor is converted to <a>', function() {
     var hyperlink = new documents.Hyperlink(
         [runOfText("Hello.")],
         {anchor: "_Peter"}
@@ -454,7 +454,7 @@ test('docx hyperlink with anchor is converted to <a>', function() {
     });
 });
 
-test('hyperlink target frame is used as anchor target', function() {
+it('hyperlink target frame is used as anchor target', function() {
     var hyperlink = new documents.Hyperlink(
         [runOfText("Hello.")],
         {anchor: "start", targetFrame: "_blank"}
@@ -465,7 +465,7 @@ test('hyperlink target frame is used as anchor target', function() {
     });
 });
 
-test('unchecked checkbox is converted to unchecked checkbox input', function() {
+it('unchecked checkbox is converted to unchecked checkbox input', function() {
     var checkbox = documents.checkbox({checked: false});
     var converter = new DocumentConverter();
     return converter.convertToHtml(checkbox).then(function(result) {
@@ -473,7 +473,7 @@ test('unchecked checkbox is converted to unchecked checkbox input', function() {
     });
 });
 
-test('checked checkbox is converted to checked checkbox input', function() {
+it('checked checkbox is converted to checked checkbox input', function() {
     var checkbox = documents.checkbox({checked: true});
     var converter = new DocumentConverter();
     return converter.convertToHtml(checkbox).then(function(result) {
@@ -481,7 +481,7 @@ test('checked checkbox is converted to checked checkbox input', function() {
     });
 });
 
-test('bookmarks are converted to anchors', function() {
+it('bookmarks are converted to anchors', function() {
     var bookmarkStart = new documents.BookmarkStart({name: "_Peter"});
     var converter = new DocumentConverter({
         idPrefix: "doc-42-"
@@ -492,7 +492,7 @@ test('bookmarks are converted to anchors', function() {
     });
 });
 
-test('docx tab is converted to tab in HTML', function() {
+it('docx tab is converted to tab in HTML', function() {
     var tab = new documents.Tab();
     var converter = new DocumentConverter();
     return converter.convertToHtml(tab).then(function(result) {
@@ -500,7 +500,7 @@ test('docx tab is converted to tab in HTML', function() {
     });
 });
 
-test('docx table is converted to table in HTML', function() {
+it('docx table is converted to table in HTML', function() {
     var table = new documents.Table([
         new documents.TableRow([
             new documents.TableCell([paragraphOfText("Top left")]),
@@ -522,7 +522,7 @@ test('docx table is converted to table in HTML', function() {
     });
 });
 
-test('table style mappings can be used to map tables', function() {
+it('table style mappings can be used to map tables', function() {
     var table = new documents.Table([], {styleName: "Normal Table"});
     var converter = new DocumentConverter({
         styleMap: [
@@ -539,7 +539,7 @@ test('table style mappings can be used to map tables', function() {
     });
 });
 
-test('header rows are wrapped in thead', function() {
+it('header rows are wrapped in thead', function() {
     var table = new documents.Table([
         new documents.TableRow([new documents.TableCell([])], {isHeader: true}),
         new documents.TableRow([new documents.TableCell([])], {isHeader: true}),
@@ -556,7 +556,7 @@ test('header rows are wrapped in thead', function() {
     });
 });
 
-test('tbody is omitted if all rows are headers', function() {
+it('tbody is omitted if all rows are headers', function() {
     var table = new documents.Table([
         new documents.TableRow([new documents.TableCell([])], {isHeader: true})
     ]);
@@ -570,7 +570,7 @@ test('tbody is omitted if all rows are headers', function() {
     });
 });
 
-test('unexpected table children do not cause error', function() {
+it('unexpected table children do not cause error', function() {
     var table = new documents.Table([
         new documents.tab()
     ]);
@@ -582,7 +582,7 @@ test('unexpected table children do not cause error', function() {
     });
 });
 
-test('empty cells are preserved in table', function() {
+it('empty cells are preserved in table', function() {
     var table = new documents.Table([
         new documents.TableRow([
             new documents.TableCell([paragraphOfText("")]),
@@ -599,7 +599,7 @@ test('empty cells are preserved in table', function() {
     });
 });
 
-test('empty rows are preserved in table', function() {
+it('empty rows are preserved in table', function() {
     var table = new documents.Table([
         new documents.TableRow([
             new documents.TableCell([paragraphOfText("Row 1")])
@@ -616,7 +616,7 @@ test('empty rows are preserved in table', function() {
     });
 });
 
-test('table cells are written with colSpan if not equal to one', function() {
+it('table cells are written with colSpan if not equal to one', function() {
     var table = new documents.Table([
         new documents.TableRow([
             new documents.TableCell([paragraphOfText("Top left")], {colSpan: 2}),
@@ -633,7 +633,7 @@ test('table cells are written with colSpan if not equal to one', function() {
     });
 });
 
-test('table cells are written with rowSpan if not equal to one', function() {
+it('table cells are written with rowSpan if not equal to one', function() {
     var table = new documents.Table([
         new documents.TableRow([
             new documents.TableCell([], {rowSpan: 2})
@@ -649,7 +649,7 @@ test('table cells are written with rowSpan if not equal to one', function() {
     });
 });
 
-test('line break is converted to <br>', function() {
+it('line break is converted to <br>', function() {
     var converter = new DocumentConverter();
 
     return converter.convertToHtml(documents.lineBreak).then(function(result) {
@@ -657,7 +657,7 @@ test('line break is converted to <br>', function() {
     });
 });
 
-test('breaks that are not line breaks are ignored', function() {
+it('breaks that are not line breaks are ignored', function() {
     var converter = new DocumentConverter();
 
     return converter.convertToHtml(documents.pageBreak).then(function(result) {
@@ -665,7 +665,7 @@ test('breaks that are not line breaks are ignored', function() {
     });
 });
 
-test('breaks can be mapped using style mappings', function() {
+it('breaks can be mapped using style mappings', function() {
     var converter = new DocumentConverter({
         styleMap: [
             {
@@ -686,7 +686,7 @@ test('breaks can be mapped using style mappings', function() {
     });
 });
 
-test('footnote reference is converted to superscript intra-page link', function() {
+it('footnote reference is converted to superscript intra-page link', function() {
     var footnoteReference = new documents.NoteReference({
         noteType: "footnote",
         noteId: "4"
@@ -699,7 +699,7 @@ test('footnote reference is converted to superscript intra-page link', function(
     });
 });
 
-test('footnotes are included after the main body', function() {
+it('footnotes are included after the main body', function() {
     var footnoteReference = new documents.NoteReference({
         noteType: "footnote",
         noteId: "4"
@@ -730,7 +730,7 @@ test('footnotes are included after the main body', function() {
     });
 });
 
-test('comments are ignored by default', function() {
+it('comments are ignored by default', function() {
     var reference = documents.commentReference({commentId: "4"});
     var comment = documents.comment({
         commentId: "4",
@@ -750,7 +750,7 @@ test('comments are ignored by default', function() {
     });
 });
 
-test('comment references are linked to comment after main body', function() {
+it('comment references are linked to comment after main body', function() {
     var reference = documents.commentReference({commentId: "4"});
     var comment = documents.comment({
         commentId: "4",
@@ -781,7 +781,7 @@ test('comment references are linked to comment after main body', function() {
     });
 });
 
-test('images are written with data URIs', function() {
+it('images are written with data URIs', function() {
     var imageBuffer = new Buffer("Not an image at all!");
     var image = new documents.Image({
         readImage: function(encoding) {
@@ -791,11 +791,11 @@ test('images are written with data URIs', function() {
     });
     var converter = new DocumentConverter();
     return converter.convertToHtml(image).then(function(result) {
-        assert.equal(result.value, '<img src="data:image/png;base64,' + imageBuffer.toString("base64") + '" />');
+        assert.equal(result.value, '<img src="data:image/png;base64,' + imageBuffer.toString("base64") + '" width="auto" height="auto" />');
     });
 });
 
-test('images have alt attribute if available', function() {
+it('images have alt attribute if available', function() {
     var imageBuffer = new Buffer("Not an image at all!");
     var image = new documents.Image({
         readImage: function() {
@@ -813,7 +813,7 @@ test('images have alt attribute if available', function() {
         });
 });
 
-test('can add custom handler for images', function() {
+it('can add custom handler for images', function() {
     var imageBuffer = new Buffer("Not an image at all!");
     var image = new documents.Image({
         readImage: function(encoding) {
@@ -833,7 +833,7 @@ test('can add custom handler for images', function() {
     });
 });
 
-test('when custom image handler throws error then error is stored in error message', function() {
+it('when custom image handler throws error then error is stored in error message', function() {
     var error = new Error("Failed to convert image");
     var image = new documents.Image({
         readImage: function(encoding) {
@@ -856,7 +856,7 @@ test('when custom image handler throws error then error is stored in error messa
     });
 });
 
-test('long documents do not cause stack overflow', function() {
+it('long documents do not cause stack overflow', function() {
     var paragraphs = [];
     for (var i = 0; i < 1000; i++) {
         paragraphs.push(paragraphOfText("Hello."));
@@ -881,11 +881,11 @@ function runOfText(text, properties) {
     return new documents.Run([textElement], properties);
 }
 
-test('when initials are not blank then comment author label is initials', function() {
+it('when initials are not blank then comment author label is initials', function() {
     assert.equal(commentAuthorLabel({authorInitials: "TP"}), "TP");
 });
 
-test('when initials are blank then comment author label is blank', function() {
+it('when initials are blank then comment author label is blank', function() {
     assert.equal(commentAuthorLabel({authorInitials: ""}), "");
     assert.equal(commentAuthorLabel({authorInitials: undefined}), "");
     assert.equal(commentAuthorLabel({authorInitials: null}), "");

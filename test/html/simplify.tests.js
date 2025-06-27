@@ -2,49 +2,49 @@ var assert = require("assert");
 
 var _ = require("underscore");
 
-var test = require("../test")(module);
+
 var html = require("../../lib/html");
 var htmlPaths = require("../../lib/styles/html-paths");
 
 var nonFreshElement = html.nonFreshElement;
 var text = html.text;
 
-test("empty text nodes are removed", function() {
+it("empty text nodes are removed", function() {
     assert.deepEqual(
         simplifyNode(text("")),
         []
     );
 });
 
-test("elements with no children are removed", function() {
+it("elements with no children are removed", function() {
     assert.deepEqual(
         simplifyNode(nonFreshElement("p", {}, [])),
         []
     );
 });
 
-test("elements only containing empty nodes are removed", function() {
+it("elements only containing empty nodes are removed", function() {
     assert.deepEqual(
         simplifyNode(nonFreshElement("p", {}, [text("")])),
         []
     );
 });
 
-test("empty children of element are removed", function() {
+it("empty children of element are removed", function() {
     assert.deepEqual(
         simplifyNode(nonFreshElement("p", {}, [text("Hello"), text("")])),
         [nonFreshElement("p", {}, [text("Hello")])]
     );
 });
 
-test("empty void elements are not removed", function() {
+it("empty void elements are not removed", function() {
     assert.deepEqual(
         simplifyNode(nonFreshElement("br", {}, [])),
         [nonFreshElement("br", {}, [])]
     );
 });
 
-test("successive fresh elements are not collapsed", function() {
+it("successive fresh elements are not collapsed", function() {
     var path = htmlPaths.elements([
         htmlPaths.element("p", {}, {fresh: true})
     ]);
@@ -58,7 +58,7 @@ test("successive fresh elements are not collapsed", function() {
         original);
 });
 
-test("successive plain non-fresh elements are collapsed if they have the same tag name", function() {
+it("successive plain non-fresh elements are collapsed if they have the same tag name", function() {
     var path = htmlPaths.elements([
         htmlPaths.element("p", {}, {fresh: false})
     ]);
@@ -71,7 +71,7 @@ test("successive plain non-fresh elements are collapsed if they have the same ta
     );
 });
 
-test("non-fresh can collapse into preceding fresh element", function() {
+it("non-fresh can collapse into preceding fresh element", function() {
     var freshPath = htmlPaths.elements([
         htmlPaths.element("p", {}, {fresh: true})]);
     var nonFreshPath = htmlPaths.elements([
@@ -85,7 +85,7 @@ test("non-fresh can collapse into preceding fresh element", function() {
     );
 });
 
-test("children of collapsed element can collapse with children of another collapsed element", function() {
+it("children of collapsed element can collapse with children of another collapsed element", function() {
     assert.deepEqual(
         html.simplify([
             nonFreshElement("blockquote", {}, [nonFreshElement("p", {}, [text("Hello")])]),
@@ -95,7 +95,7 @@ test("children of collapsed element can collapse with children of another collap
     );
 });
 
-test("empty elements are removed before collapsing", function() {
+it("empty elements are removed before collapsing", function() {
     var freshPath = htmlPaths.elements([
         htmlPaths.element("p", {}, {fresh: true})]);
     var nonFreshPath = htmlPaths.elements([
@@ -110,7 +110,7 @@ test("empty elements are removed before collapsing", function() {
     );
 });
 
-test("when separator is present then separator is prepended to collapsed element", function() {
+it("when separator is present then separator is prepended to collapsed element", function() {
     var unseparatedPath = htmlPaths.elements([
         htmlPaths.element("pre", {}, {fresh: false})
     ]);

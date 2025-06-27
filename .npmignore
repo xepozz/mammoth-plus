@@ -5,7 +5,7 @@ _build
 test
 browser-demo
 node_modules
-makefile
+Makefile
 static
 npm-shrinkwrap.json
 .history

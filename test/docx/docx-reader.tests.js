@@ -5,12 +5,12 @@ var documents = require("../../lib/documents");
 var xml = require("../../lib/xml");
 
 var testing = require("../testing");
-var test = require("../test")(module);
+
 var testData = testing.testData;
 var createFakeDocxFile = testing.createFakeDocxFile;
 
 
-test("can read document with single paragraph with single run of text", function() {
+it("can read document with single paragraph with single run of text", function() {
     var expectedDocument = documents.Document([
         documents.Paragraph([
             documents.Run([
@@ -26,7 +26,7 @@ test("can read document with single paragraph with single run of text", function
     });
 });
 
-test("hyperlink hrefs are read from relationships file", function() {
+it("hyperlink hrefs are read from relationships file", function() {
     var docxFile = createFakeDocxFile({
         "word/document.xml": testData("hyperlinks/word/document.xml"),
         "word/_rels/document.xml.rels": testData("hyperlinks/word/_rels/document.xml.rels")
@@ -44,7 +44,7 @@ var relationshipNamespaces = {
     "r": "http://schemas.openxmlformats.org/package/2006/relationships"
 };
 
-test("main document is found using _rels/.rels", function() {
+it("main document is found using _rels/.rels", function() {
     var relationships = xml.element("r:Relationships", {}, [
         xml.element("r:Relationship", {
             "Type": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
@@ -69,7 +69,7 @@ test("main document is found using _rels/.rels", function() {
 });
 
 
-test("error is thrown when main document part does not exist", function() {
+it("error is thrown when main document part does not exist", function() {
     var relationships = xml.element("r:Relationships", {}, [
         xml.element("r:Relationship", {
             "Type": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
@@ -88,8 +88,8 @@ test("error is thrown when main document part does not exist", function() {
 });
 
 
-test("part paths", {
-    "main document part is found using package relationships": function() {
+describe("part paths", function() {
+    it("main document part is found using package relationships", function() {
         var relationships = xml.element("r:Relationships", {}, [
             xml.element("r:Relationship", {
                 "Type": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
@@ -104,16 +104,16 @@ test("part paths", {
         return docxReader._findPartPaths(docxFile).then(function(partPaths) {
             assert.equal(partPaths.mainDocument, "word/document2.xml");
         });
-    },
+    });
     
-    "word/document.xml is used as fallback location for main document part": function() {
+    it("word/document.xml is used as fallback location for main document part", function() {
         var docxFile = createFakeDocxFile({
             "word/document.xml": " "
         });
         return docxReader._findPartPaths(docxFile).then(function(partPaths) {
             assert.equal(partPaths.mainDocument, "word/document.xml");
         });
-    }
+    });
 });
 
 [
@@ -138,7 +138,7 @@ test("part paths", {
         type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
     }
 ].forEach(function(options) {
-    test(options.name + " part is found using main document relationships", function() {
+    it(options.name + " part is found using main document relationships", function() {
         var docxFile = createFakeDocxFile({
             "_rels/.rels": createPackageRelationships("word/document.xml"),
             "word/document.xml": " ",
@@ -155,7 +155,7 @@ test("part paths", {
         });
     });
 
-    test("word/" + options.name + ".xml is used as fallback location for " + options.name + " part", function() {
+    it("word/" + options.name + ".xml is used as fallback location for " + options.name + " part", function() {
         var zipContents = {
             "_rels/.rels": createPackageRelationships("word/document.xml"),
             "word/document.xml": " "

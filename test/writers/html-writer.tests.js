@@ -1,10 +1,10 @@
 var assert = require("assert");
-var test = require("../test")(module);
+
 
 var htmlWriter = require("../../lib/writers/html-writer");
 
 
-test('can generate simple paragraph', function() {
+it('can generate simple paragraph', function() {
     var writer = htmlWriter.writer();
     writer.open("p");
     writer.text("Hello");
@@ -12,7 +12,7 @@ test('can generate simple paragraph', function() {
     return assert.equal(writer.asString(), "<p>Hello</p>");
 });
 
-test('can nest elements', function() {
+it('can nest elements', function() {
     var writer = htmlWriter.writer();
     writer.open("ul");
     writer.open("li");
@@ -25,7 +25,7 @@ test('can nest elements', function() {
     return assert.equal(writer.asString(), "<ul><li>One</li><li>Two</li></ul>");
 });
 
-test('indents text if prettyPrint is true', function() {
+it('indents text if prettyPrint is true', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.text("One");
@@ -36,7 +36,7 @@ test('indents text if prettyPrint is true', function() {
     return assert.equal(writer.asString(), "<p>\n  One\n</p>\n<p>\n  Two\n</p>");
 });
 
-test('indents element if prettyPrint is true', function() {
+it('indents element if prettyPrint is true', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("ul");
     writer.open("li");
@@ -49,7 +49,7 @@ test('indents element if prettyPrint is true', function() {
     return assert.equal(writer.asString(), "<ul>\n  <li>\n    One\n  </li>\n  <li>\n    Two\n  </li>\n</ul>");
 });
 
-test('when prettyPrint is true inner elements do not have new lines', function() {
+it('when prettyPrint is true inner elements do not have new lines', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.text("One");
@@ -60,7 +60,7 @@ test('when prettyPrint is true inner elements do not have new lines', function()
     return assert.equal(writer.asString(), "<p>\n  One<em>Two</em>\n</p>");
 });
 
-test('indents closing element correctly when nested inside another indented element', function() {
+it('indents closing element correctly when nested inside another indented element', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("div");
     writer.open("div");
@@ -72,7 +72,7 @@ test('indents closing element correctly when nested inside another indented elem
     return assert.equal(writer.asString(), "<div>\n  <div>\n    <div>\n      Hello\n    </div>\n  </div>\n</div>");
 });
 
-test('newlines in text are indented', function() {
+it('newlines in text are indented', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.text("One\nTwo");
@@ -80,7 +80,7 @@ test('newlines in text are indented', function() {
     return assert.equal(writer.asString(), "<p>\n  One\n  Two\n</p>");
 });
 
-test('run of text has only one new line', function() {
+it('run of text has only one new line', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.text("One");
@@ -89,7 +89,7 @@ test('run of text has only one new line', function() {
     return assert.equal(writer.asString(), "<p>\n  OneTwo\n</p>");
 });
 
-test('run of html has only one new line', function() {
+it('run of html has only one new line', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.text("One");
@@ -98,7 +98,7 @@ test('run of html has only one new line', function() {
     return assert.equal(writer.asString(), "<p>\n  OneTwo\n</p>");
 });
 
-test('self closing elements are indented', function() {
+it('self closing elements are indented', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.selfClosing("br");
@@ -106,7 +106,7 @@ test('self closing elements are indented', function() {
     return assert.equal(writer.asString(), "<p>\n  <br />\n</p>");
 });
 
-test('newlines in appended HTML are indented', function() {
+it('newlines in appended HTML are indented', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("p");
     writer.text("One\nTwo");
@@ -114,7 +114,7 @@ test('newlines in appended HTML are indented', function() {
     return assert.equal(writer.asString(), "<p>\n  One\n  Two\n</p>");
 });
 
-test('newlines in <pre> are not indented', function() {
+it('newlines in <pre> are not indented', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("pre");
     writer.text("One\nTwo");
@@ -122,7 +122,7 @@ test('newlines in <pre> are not indented', function() {
     return assert.equal(writer.asString(), "<pre>One\nTwo</pre>");
 });
 
-test('newlines in element in <pre> are not indented', function() {
+it('newlines in element in <pre> are not indented', function() {
     var writer = htmlWriter.writer({prettyPrint: true});
     writer.open("pre");
     writer.open("p");

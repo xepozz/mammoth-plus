@@ -2,10 +2,10 @@ var assert = require("assert");
 
 var readContentTypesFromXml = require("../../lib/docx/content-types-reader").readContentTypesFromXml;
 var XmlElement = require("../../lib/xml").Element;
-var test = require("../test")(module);
 
 
-test('reads default-per-extension from XML', function() {
+
+it('reads default-per-extension from XML', function() {
     var contentTypes = readContentTypesFromXml(
         new XmlElement("content-types:Types", {}, [
             new XmlElement("content-types:Default", {Extension: "png", ContentType: "image/png"})
@@ -14,7 +14,7 @@ test('reads default-per-extension from XML', function() {
     assert.equal(contentTypes.findContentType("word/media/hat.png"), "image/png");
 });
 
-test('reads overrides in preference to defaults', function() {
+it('reads overrides in preference to defaults', function() {
     var contentTypes = readContentTypesFromXml(
         new XmlElement("content-types:Types", {}, [
             new XmlElement("content-types:Default", {Extension: "png", ContentType: "image/png"}),
@@ -24,7 +24,7 @@ test('reads overrides in preference to defaults', function() {
     assert.equal(contentTypes.findContentType("word/media/hat.png"), "image/hat");
 });
 
-test('fallback content types have common image types', function() {
+it('fallback content types have common image types', function() {
     var contentTypes = readContentTypesFromXml(
         new XmlElement("content-types:Types", {}, [])
     );
@@ -37,7 +37,7 @@ test('fallback content types have common image types', function() {
     assert.equal(contentTypes.findContentType("word/media/hat.tiff"), "image/tiff");
 });
 
-test('fallback content types are case insensitive on extension', function() {
+it('fallback content types are case insensitive on extension', function() {
     var contentTypes = readContentTypesFromXml(
         new XmlElement("content-types:Types", {}, [])
     );

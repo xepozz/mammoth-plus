@@ -14,13 +14,14 @@
         "markdown",
         "md"
     ],
-    "main": "./dist/mammoth-plus.min.js",
+    "type": "commonjs",
+    "main": "./lib/index.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/ihwf/mammoth-plus"
     },
     "dependencies": {
-        "@xmldom/xmldom": "^0.8.6",
+        "@xmldom/xmldom": "^0.9.8",
         "argparse": "~1.0.3",
         "base64-js": "^1.5.1",
         "bluebird": "~3.4.0",
@@ -32,8 +33,7 @@
         "path-is-absolute": "^1.0.0",
         "sax": "~1.1.1",
         "underscore": "^1.13.1",
-        "xmlbuilder": "^10.0.0",
-        "xmldom": "^0.6.0"
+        "xmlbuilder": "^10.0.0"
     },
     "devDependencies": {
         "@types/node": "^20.2.5",
@@ -42,7 +42,7 @@
         "duck": "^0.1.12",
         "eslint": "2.13.1",
         "hamjest": "^4.0.1",
-        "mocha": "~2.2.5",
+        "mocha": "^11.7.1",
         "temp": "^0.9.4",
         "typescript": "^5.0.4",
         "uglify-js": "~3.17.4"
@@ -56,16 +56,16 @@
     },
     "scripts": {
         "pretest": "eslint lib test",
-        "test": "mocha 'test/**/*.tests.js'",
+        "test": "mocha test",
         "check-typescript": "tsc --noEmit lib/index.d.ts",
         "prepare": "make mammoth-plus.min.js"
     },
     "license": "BSD-2-Clause",
     "engines": {
-      "node": ">=12.0.0"
+        "node": ">=12.0.0"
     },
     "volta": {
-      "node": "16.18.1",
-      "npm": "8.19.2"
+        "node": "16.18.1",
+        "npm": "8.19.2"
     }
 }

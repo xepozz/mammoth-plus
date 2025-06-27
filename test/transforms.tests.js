@@ -4,49 +4,49 @@ var _ = require("underscore");
 
 var documents = require("../lib/documents");
 var transforms = require("../lib/transforms");
-var test = require("./test")(module);
 
 
-test("paragraph()", {
-    "paragraph is transformed": function() {
+
+describe("paragraph()", function () {
+    it("paragraph is transformed", function() {
         var paragraph = documents.paragraph([]);
         var result = transforms.paragraph(function() {
             return documents.tab();
         })(paragraph);
         assert.deepEqual(result, documents.tab());
-    },
+    })
     
-    "non-paragraph elements are not transformed": function() {
+    it("non-paragraph elements are not transformed", function() {
         var run = documents.run([]);
         var result = transforms.paragraph(function() {
             return documents.tab();
         })(run);
         assert.deepEqual(result, documents.run([]));
-    }
+    })
 });
 
 
-test("run()", {
-    "run is transformed": function() {
+describe("run()", function () {
+    it("run is transformed", function() {
         var run = documents.run([]);
         var result = transforms.run(function() {
             return documents.tab();
         })(run);
         assert.deepEqual(result, documents.tab());
-    },
+    })
     
-    "non-run elements are not transformed": function() {
+    it("non-run elements are not transformed", function() {
         var paragraph = documents.paragraph([]);
         var result = transforms.run(function() {
             return documents.tab();
         })(paragraph);
         assert.deepEqual(result, documents.paragraph([]));
-    }
+    })
 });
 
 
-test("elements()", {
-    "all descendants are transformed": function() {
+describe("elements()", function () {
+    it("all descendants are transformed", function() {
         var root = {
             children: [
                 {
@@ -75,20 +75,20 @@ test("elements()", {
                 }
             ]
         });
-    }
+    })
 });
 
 
-test("getDescendants()", {
-    "returns nothing if element has no children property": function() {
+describe("getDescendants()", function () {
+    it("returns nothing if element has no children property", function() {
         assert.deepEqual(transforms.getDescendants({}), []);
-    },
+    })
     
-    "returns nothing if element has empty children": function() {
+    it("returns nothing if element has empty children", function() {
         assert.deepEqual(transforms.getDescendants({children: []}), []);
-    },
+    })
     
-    "includes children": function() {
+    it("includes children", function() {
         var element = {
             children: [{name: "child 1"}, {name: "child 2"}]
         };
@@ -96,9 +96,9 @@ test("getDescendants()", {
             transforms.getDescendants(element),
             [{name: "child 1"}, {name: "child 2"}]
         );
-    },
+    })
     
-    "includes indirect descendants": function() {
+    it("includes indirect descendants", function() {
         var grandchild = {name: "grandchild"};
         var child = {name: "child", children: [grandchild]};
         var element = {children: [child]};
@@ -106,12 +106,12 @@ test("getDescendants()", {
             transforms.getDescendants(element),
             [grandchild, child]
         );
-    }
+    })
 });
 
 
-test("getDescendantsOfType()", {
-    "filters descendants to type": function() {
+describe("getDescendantsOfType()", function() {
+    it("filters descendants to type", function() {
         var paragraph = {type: "paragraph"};
         var run = {type: "run"};
         var element = {
@@ -121,5 +121,5 @@ test("getDescendantsOfType()", {
             transforms.getDescendantsOfType(element, "run"),
             [run]
         );
-    }
+    });
 });

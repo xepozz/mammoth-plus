@@ -2,10 +2,10 @@ var assert = require("assert");
 
 var readRelationships = require("../../lib/docx/relationships-reader").readRelationships;
 var xml = require("../../lib/xml");
-var test = require("../test")(module);
 
 
-test("relationships can be found by ID", function() {
+
+it("relationships can be found by ID", function() {
     var relationships = readRelationships(relationshipsElement([
         relationshipElement({
             "Id": "rId1",
@@ -22,7 +22,7 @@ test("relationships can be found by ID", function() {
 });
 
 
-test("relationships can be found by type", function() {
+it("relationships can be found by type", function() {
     var relationships = readRelationships(relationshipsElement([
         relationshipElement({
             "Id": "rId2",
@@ -47,7 +47,7 @@ test("relationships can be found by type", function() {
 });
 
 
-test("when there are no relationships of requested type then empty array is returned", function() {
+it("when there are no relationships of requested type then empty array is returned", function() {
     var relationships = readRelationships(relationshipsElement([]));
     assert.deepEqual(
         relationships.findTargetsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"),

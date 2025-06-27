@@ -2,19 +2,19 @@ var assert = require("assert");
 
 var xml = require("../../lib/xml");
 var writer = require("../../lib/xml/writer");
-var test = require("../test")(module);
 
 
-test('writing empty root element writes out xml declaration and empty root element', function() {
+
+it('writing empty root element writes out xml declaration and empty root element', function() {
     assertXmlString(xml.element("root"), {}, '<root/>');
 });
 
-test('can write empty child elements', function() {
+it('can write empty child elements', function() {
     assertXmlString(xml.element("root", {}, [xml.element("album"), xml.element("single")]), {},
         '<root><album/><single/></root>');
 });
 
-test('can write empty descendant elements', function() {
+it('can write empty descendant elements', function() {
     var element = xml.element("root", {}, [
         xml.element("album", {}, [
             xml.element("year"),
@@ -25,7 +25,7 @@ test('can write empty descendant elements', function() {
         '<root><album><year/><song/></album></root>');
 });
 
-test('can write element attributes', function() {
+it('can write element attributes', function() {
     var element = xml.element("root", {}, [
         xml.element("album", {"title": "Everything in Transit"})
     ]);
@@ -33,7 +33,7 @@ test('can write element attributes', function() {
         '<root><album title="Everything in Transit"/></root>');
 });
 
-test('can write text nodes', function() {
+it('can write text nodes', function() {
     var element = xml.element("root", {}, [
         xml.element("album", {}, [
             xml.text("Everything in Transit")
@@ -43,13 +43,13 @@ test('can write text nodes', function() {
         '<root><album>Everything in Transit</album></root>');
 });
 
-test('can write root element with long-form prefix when URI is namespace', function() {
+it('can write root element with long-form prefix when URI is namespace', function() {
     var element = xml.element("{music}root");
     assertXmlString(element, {"m": "music"},
         '<m:root xmlns:m="music"/>');
 });
 
-test('can write child elements with long-form prefix when URI is namespace', function() {
+it('can write child elements with long-form prefix when URI is namespace', function() {
     var element = xml.element("root", {}, [
         xml.element("{music}album")
     ]);
@@ -57,7 +57,7 @@ test('can write child elements with long-form prefix when URI is namespace', fun
         '<root xmlns:m="music"><m:album/></root>');
 });
 
-test('can write child elements with short-form prefix when URI is namespace', function() {
+it('can write child elements with short-form prefix when URI is namespace', function() {
     var element = xml.element("root", {}, [
         xml.element("m:album")
     ]);
@@ -65,7 +65,7 @@ test('can write child elements with short-form prefix when URI is namespace', fu
         '<root xmlns:m="music"><m:album/></root>');
 });
 
-test('default namespace has key of empty string', function() {
+it('default namespace has key of empty string', function() {
     var element = xml.element("root", {}, [
         xml.element("{music}album")
     ]);

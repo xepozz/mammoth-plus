@@ -1,11 +1,11 @@
 var assert = require("assert");
 
 var documents = require("../lib/documents");
-var test = require("./test")(module);
+
 var convertElementToRawText = require("../lib/raw-text").convertElementToRawText;
 
 
-test('text element is converted to text content', function() {
+it('text element is converted to text content', function() {
     var element = new documents.Text("Hello.");
 
     var result = convertElementToRawText(element);
@@ -13,7 +13,7 @@ test('text element is converted to text content', function() {
     assert.strictEqual(result, "Hello.");
 });
 
-test('tab element is converted to tab character', function() {
+it('tab element is converted to tab character', function() {
     var element = documents.tab();
 
     var result = convertElementToRawText(element);
@@ -21,7 +21,7 @@ test('tab element is converted to tab character', function() {
     assert.strictEqual(result, "\t");
 });
 
-test('paragraphs are terminated with newlines', function() {
+it('paragraphs are terminated with newlines', function() {
     var element = new documents.Paragraph(
         [
             new documents.Text("Hello "),
@@ -35,7 +35,7 @@ test('paragraphs are terminated with newlines', function() {
     assert.strictEqual(result, "Hello world.\n\n");
 });
 
-test('children are recursively converted to text', function() {
+it('children are recursively converted to text', function() {
     var element = new documents.Document([
         new documents.Paragraph(
             [
@@ -52,7 +52,7 @@ test('children are recursively converted to text', function() {
 });
 
 
-test('non-text element without children is converted to empty string', function() {
+it('non-text element without children is converted to empty string', function() {
     var element = documents.lineBreak;
 
     var result = convertElementToRawText(element);

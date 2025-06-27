@@ -10,15 +10,13 @@ var mammothPlus = require("../");
 var documents = require("../lib/documents");
 var promises = require("../lib/promises");
 
-var test = require("./test")(module);
 
-
-test('mammothPlus.images.inline() should be an alias of mammothPlus.images.imgElement()', function() {
+it('mammothPlus.images.inline() should be an alias of mammothPlus.images.imgElement()', function() {
     assert.ok(mammothPlus.images.inline === mammothPlus.images.imgElement);
 });
 
 
-test('mammothPlus.images.dataUri() encodes images in base64', function() {
+it('mammothPlus.images.dataUri() encodes images in base64', function() {
     var imageBuffer = new Buffer("abc");
     var image = new documents.Image({
         readImage: function(encoding) {
@@ -29,14 +27,14 @@ test('mammothPlus.images.dataUri() encodes images in base64', function() {
 
     return mammothPlus.images.dataUri(image).then(function(result) {
         assertThat(result, contains(
-            hasProperties({tag: hasProperties({attributes: {"src": "data:image/jpeg;base64,YWJj"}})})
+            hasProperties({tag: hasProperties({attributes: hasProperties({"src": "data:image/jpeg;base64,YWJj"})})})
         ));
     });
 });
 
 
-test('mammothPlus.images.imgElement()', {
-    'when element does not have alt text then alt attribute is not set': function() {
+describe('mammothPlus.images.imgElement()', function() {
+    it('when element does not have alt text then alt attribute is not set', function() {
         var imageBuffer = new Buffer("abc");
         var image = new documents.Image({
             readImage: function(encoding) {
@@ -58,9 +56,9 @@ test('mammothPlus.images.imgElement()', {
                 })
             ));
         });
-    },
+    });
 
-    'when element has alt text then alt attribute is set': function() {
+    it('when element has alt text then alt attribute is set', function() {
         var imageBuffer = new Buffer("abc");
         var image = new documents.Image({
             readImage: function(encoding) {
@@ -83,9 +81,9 @@ test('mammothPlus.images.imgElement()', {
                 })
             ));
         });
-    },
+    });
 
-    'image alt text can be overridden by alt attribute returned from function': function() {
+    it('image alt text can be overridden by alt attribute returned from function', function() {
         var imageBuffer = new Buffer("abc");
         var image = new documents.Image({
             readImage: function(encoding) {
@@ -108,5 +106,5 @@ test('mammothPlus.images.imgElement()', {
                 })
             ));
         });
-    }
+    });
 });

@@ -4,82 +4,80 @@ var contains = hamjest.contains;
 var hasProperties = hamjest.hasProperties;
 
 var tokenise = require("../../../lib/styles/parser/tokeniser").tokenise;
-var test = require("../../test")(module);
 
-
-test("unknown tokens are tokenised", function() {
+it("unknown tokens are tokenised", function() {
     assertTokens("~", [isToken("unrecognisedCharacter", "~")]);
 });
 
-test("empty string is tokenised to end of file token", function() {
+it("empty string is tokenised to end of file token", function() {
     assertTokens("", []);
 });
 
-test("whitespace is tokenised", function() {
+it("whitespace is tokenised", function() {
     assertTokens(" \t\t  ", [isToken("whitespace")]);
 });
 
-test("identifiers are tokenised", function() {
+it("identifiers are tokenised", function() {
     assertTokens("Overture", [isToken("identifier", "Overture")]);
 });
 
-test("integers are tokenised", function() {
+it("integers are tokenised", function() {
     assertTokens("123", [isToken("integer", "123")]);
 });
 
-test("strings are tokenised", function() {
+it("strings are tokenised", function() {
     assertTokens("'Tristan'", [isToken("string", "Tristan")]);
 });
 
-test("unterminated strings are tokenised", function() {
+it("unterminated strings are tokenised", function() {
     assertTokens("'Tristan", [isToken("unterminated-string", "Tristan")]);
 });
 
-test("arrows are tokenised", function() {
+it("arrows are tokenised", function() {
     assertTokens("=>", [isToken("arrow")]);
 });
 
-test("classes are tokenised", function() {
+it("classes are tokenised", function() {
     assertTokens(".overture", [isToken("dot"), isToken("identifier", "overture")]);
 });
 
-test("colons are tokenised", function() {
+it("colons are tokenised", function() {
     assertTokens("::", [isToken("colon"), isToken("colon")]);
 });
 
-test("greater thans are tokenised", function() {
+it("greater thans are tokenised", function() {
     assertTokens(">>", [isToken("gt"), isToken("gt")]);
 });
 
-test("equals are tokenised", function() {
+it("equals are tokenised", function() {
     assertTokens("==", [isToken("equals"), isToken("equals")]);
 });
 
-test("startsWith symbols are tokenised", function() {
+it("startsWith symbols are tokenised", function() {
     assertTokens("^=^=", [isToken("startsWith"), isToken("startsWith")]);
 });
 
-test("open parens are tokenised", function() {
+it("open parens are tokenised", function() {
     assertTokens("((", [isToken("open-paren"), isToken("open-paren")]);
 });
 
-test("close parens are tokenised", function() {
+it("close parens are tokenised", function() {
     assertTokens("))", [isToken("close-paren"), isToken("close-paren")]);
 });
 
-test("open square brackets are tokenised", function() {
+it("open square brackets are tokenised", function() {
     assertTokens("[[", [isToken("open-square-bracket"), isToken("open-square-bracket")]);
 });
 
-test("close square brackets are tokenised", function() {
+it("close square brackets are tokenised", function() {
     assertTokens("]]", [isToken("close-square-bracket"), isToken("close-square-bracket")]);
 });
 
-test("choices are tokenised", function() {
+it("choices are tokenised", function() {
     assertTokens("||", [isToken("choice"), isToken("choice")]);
 });
 
-test("can tokenise multiple tokens", function() {
+it("can tokenise multiple tokens", function() {
     assertTokens("The Magic Position", [
         isToken("identifier", "The"),
         isToken("whitespace"),
