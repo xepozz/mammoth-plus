@@ -60,6 +60,35 @@ it('namespace of attributes is mapped to prefix', function() {
     });
 });
 
+it('namespace of attributes is mapped to prefix', function() {
+    var namespaceMap = {
+        "word": "x"
+    };
+    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:r>
+        <m:t{http://www.w3.org/XML/1998/namespace}space="preserve"> ∈ 
+        G</m:t>
+    </m:r>
+    </w:document>`;
+    return xmlreader.readString(xmlString, namespaceMap).then(function(result) {
+        let child = result.children[1].children[1];
+        assert.equal(typeof child == "object", true);
+        assert.deepEqual( child, {
+            "attributes": {
+                "{http://www.w3.org/XML/1998/namespace}space": "preserve"
+            },
+            "children": [
+                {
+                    "type": "text",
+                    "value": " ∈ \n        G"
+                }
+            ],
+            "name": "{http://schemas.openxmlformats.org/officeDocument/2006/math}t",
+            "type": "element"
+        });
+    });
+});
+
 it('can find first element with name', function() {
     return xmlreader.readString('<body><a/><b index="1"/><b index="2"/></body>').then(function(result) {
         var first = result.first("b");
