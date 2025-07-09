@@ -2222,7 +2222,7 @@ var xmlNamespaceMap = {
 
     "urn:schemas-microsoft-com:vml": "v",
     "urn:schemas-microsoft-com:office:word": "office-word",
-    "http://www.w3.org/XML/1998/namespace": "xml",
+    "http://www.w3.org/XML/1998/namespace": "ns",
 
     // [MS-DOCX]: Word Extensions to the Office Open XML (.docx) File Format
     // https://learn.microsoft.com/en-us/openspecs/office_standards/ms-docx/b839fe1f-e1ca-4fa6-8c26-5954d0abbccd
@@ -2231,7 +2231,7 @@ var xmlNamespaceMap = {
 
 
 function read(xmlString) {
-    xmlString = xmlString.replace('{http://www.w3.org/XML/1998/namespace}space=', ' xml:space=');
+    xmlString = transformToStandardXML(xmlString, xmlNamespaceMap);
     return xml
         .readString(xmlString, xmlNamespaceMap)
         .then(function(document) {
@@ -2269,6 +2269,26 @@ function collapseAlternateContent(node) {
     }
 }
 
+function transformToStandardXML(xmlString, urlToName) {
+    var uriToPrefix = new Map();
+    var prefixCount = 0;
+
+    /**
+     * <([^>]*?) - capture everything inside the tag before {
+     * \{([^}]+)\} - capture URI inside {}
+     * ([^=]+)= - capture attribute name before =
+     */
+    return xmlString.replace(/(<[^>]*)\{([^}]+)}([^=]+)=/g, (match, beforeAttr, uri, attr) => {
+        if (!uriToPrefix.has(uri)) {
+            const prefix = urlToName[uri] || `ns${prefixCount++}`;
+            uriToPrefix.set(uri, prefix);
+            // Добавляем xmlns в этот же элемент
+            beforeAttr += ` xmlns:${prefix}="${uri}"`;
+        }
+        const prefix = uriToPrefix.get(uri);
+        return `${beforeAttr} ${prefix}:${attr}=`;
+    });
+}
 },{"../promises":23,"../xml":35,"underscore":112}],13:[function(require,module,exports){
 exports.readRelationships = readRelationships;
 exports.defaultValue = new Relationships([]);
