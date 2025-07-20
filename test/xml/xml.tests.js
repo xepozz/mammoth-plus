@@ -168,3 +168,19 @@ it('simplify clark notation. subelements', function() {
 
     assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
 });
+
+
+it('simplify clark notation. wtf', function() {
+    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <w:rPr {http://www.w3.org/2000/xmlns/}w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+      <w:szCs w:val="25"/>
+    </w:rPr>
+    </w:document>`;
+    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <w:rPr  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:xmlns="http://www.w3.org/2000/xmlns/">
+      <w:szCs w:val="25"/>
+    </w:rPr>
+    </w:document>`;
+
+    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+});
