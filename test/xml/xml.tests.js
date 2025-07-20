@@ -121,7 +121,7 @@ it('simplify clark notation. xmlns in each tag', function() {
     var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
         G</m:t>
-    <m:t ns:space="preserve" {http://www.w3.org/XML/1998/namespace}test="ok" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
+    <m:t ns:space="preserve"  ns:test="ok" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
         G</m:t>
     <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
     G</m:t>
