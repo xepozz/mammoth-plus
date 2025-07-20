@@ -115,7 +115,7 @@ it('simplify clark notation. xmlns in each tag', function() {
         G</m:t>
     <m:t{http://www.w3.org/XML/1998/namespace}space="preserve" {http://www.w3.org/XML/1998/namespace}test="ok"> ∈ 
         G</m:t>
-    <m:t{http://www.w3.org/XML/1998/namespace}space="preserve"> ∈ 
+    <m:t {http://schemas.openxmlformats.org/officeDocument/2006/math}space="preserve"> ∈ 
     G</m:t>
     </w:document>`;
     var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
@@ -123,8 +123,32 @@ it('simplify clark notation. xmlns in each tag', function() {
         G</m:t>
     <m:t ns:space="preserve"  ns:test="ok" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
         G</m:t>
-    <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
+    <m:t  m:space="preserve" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"> ∈ 
     G</m:t>
+    </w:document>`;
+
+    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+});
+it('simplify clark notation. namespace from dict', function() {
+    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t{http://schemas.openxmlformats.org/officeDocument/2006/math}space="preserve"> ∈ G</m:t>
+    </w:document>`;
+    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t m:space="preserve" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"> ∈ G</m:t>
+    </w:document>`;
+
+    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+});
+it('simplify clark notation. namespace increment', function() {
+    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t{http://schema1}space="preserve" />
+    <m:t{http://schema2}space="preserve" />
+    <m:t{http://schema3}space="preserve" />
+    </w:document>`;
+    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t ns3:space="preserve"  xmlns:ns3="http://schema1"/>
+    <m:t ns2:space="preserve"  xmlns:ns2="http://schema2"/>
+    <m:t ns1:space="preserve"  xmlns:ns1="http://schema3"/>
     </w:document>`;
 
     assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
