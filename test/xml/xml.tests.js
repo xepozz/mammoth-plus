@@ -153,3 +153,18 @@ it('simplify clark notation. namespace increment', function() {
 
     assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
 });
+
+it('simplify clark notation. subelements', function() {
+    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t{http://schema1}space="preserve">
+        <el />
+    </m:t>
+    </w:document>`;
+    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t ns1:space="preserve" xmlns:ns1="http://schema1">
+        <el />
+    </m:t>
+    </w:document>`;
+
+    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+});
