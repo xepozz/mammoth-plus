@@ -108,3 +108,24 @@ it('simplify clark notation. not replace', function() {
 
     assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
 });
+
+it('simplify clark notation. xmlns in each tag', function() {
+    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t{http://www.w3.org/XML/1998/namespace}space="preserve"> ∈ 
+        G</m:t>
+    <m:t{http://www.w3.org/XML/1998/namespace}space="preserve" {http://www.w3.org/XML/1998/namespace}test="ok"> ∈ 
+        G</m:t>
+    <m:t{http://www.w3.org/XML/1998/namespace}space="preserve"> ∈ 
+    G</m:t>
+    </w:document>`;
+    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
+        G</m:t>
+    <m:t ns:space="preserve" {http://www.w3.org/XML/1998/namespace}test="ok" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
+        G</m:t>
+    <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
+    G</m:t>
+    </w:document>`;
+
+    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+});
