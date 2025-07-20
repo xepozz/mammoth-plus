@@ -21,7 +21,7 @@
         "url": "https://github.com/ihwf/mammoth-plus"
     },
     "dependencies": {
-        "@xmldom/xmldom": "^0.8.10",
+        "@xmldom/xmldom": "^0.9.8",
         "argparse": "~1.0.3",
         "base64-js": "^1.5.1",
         "bluebird": "~3.4.0",
@@ -40,7 +40,8 @@
         "browserify": "~13.0.1",
         "browserify-prepend-licenses": "~1.0.0",
         "duck": "^0.1.12",
-        "eslint": "2.13.1",
+        "eslint": "^9.31.0",
+        "eslint-plugin-mocha": "^11.1.0",
         "hamjest": "^4.0.1",
         "mocha": "^11.7.1",
         "temp": "^0.9.4",
@@ -55,7 +56,6 @@
         "mammoth-plus": "bin/mammoth-plus"
     },
     "scripts": {
-        "pretest": "eslint lib test",
         "test": "mocha test",
         "check-typescript": "tsc --noEmit lib/index.d.ts",
         "prepare": "make mammoth-plus.min.js"
