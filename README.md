@@ -49,26 +49,26 @@ Try in [here](https://ihwf.github.io/mammoth-plus/)
 mammoth can be required/import in the usual way:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 // or
-import mammothPlus from 'mammoth'
+import mammoth from 'mammoth'
 ```
 
 If not use module system,
 to generate a standalone JavaScript file for the browser,
 use `mammoth.min.js` (generate using `make setup` if it is not already present).
-`mammothPlus` is set as a window global.
+`mammoth` is set as a window global.
 
 The file can be generated using `make setup` during development.
 
 #### Basic conversion
 
-To convert an existing .docx file to HTML, use `mammothPlus.convertToHtml`:
+To convert an existing .docx file to HTML, use `mammoth.convertToHtml`:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
-mammothPlus
+mammoth
     .convertToHtml({
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -82,14 +82,14 @@ mammothPlus
     });
 ```
 
-Note that `mammothPlus.convertToHtml` returns a [promise](http://promises-aplus.github.io/promises-spec/).
+Note that `mammoth.convertToHtml` returns a [promise](http://promises-aplus.github.io/promises-spec/).
 
-You can also extract the raw text of the document by using `mammothPlus.extractRawText`.
+You can also extract the raw text of the document by using `mammoth.extractRawText`.
 This will ignore all formatting in the document.
 Each paragraph is followed by two newlines.
 
 ```javascript
-mammothPlus
+mammoth
     .extractRawText({
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -115,7 +115,7 @@ For instance, if paragraphs with the style name `Section Title` should be conver
 and paragraphs with the style name `Subsection Title` should be converted to `h2` elements:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
 var options = {
     styleMap: [
@@ -123,7 +123,7 @@ var options = {
         "p[style-name='Subsection Title'] => h2:fresh"
     ]
 }
-mammothPlus.convertToHtml(
+mammoth.convertToHtml(
     {
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -168,7 +168,7 @@ For instance, the following would replicate the default behaviour:
 
 ```javascript
 var options = {
-    convertImage: mammothPlus.images.imgElement(function (image) {
+    convertImage: mammoth.images.imgElement(function (image) {
         return image.read('base64').then(function (imageBuffer) {
             return {
                 src: 'data:' + image.contentType + ';base64,' + imageBuffer
@@ -185,12 +185,12 @@ This behaviour can be changed by adding a style mapping for `b`.
 For instance, to wrap bold text in `<em>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
 var options = {
     styleMap: ['b => em']
 }
-mammothPlus.convertToHtml(
+mammoth.convertToHtml(
     {
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -206,12 +206,12 @@ This behaviour can be changed by adding a style mapping for `i`.
 For instance, to wrap italic text in `<strong>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
 var options = {
     styleMap: ['i => strong']
 }
-mammothPlus.convertToHtml(
+mammoth.convertToHtml(
     {
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -228,12 +228,12 @@ For instance, suppose that a source document uses underlining for emphasis.
 The following will wrap any explicitly underlined source text in `<em>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
 var options = {
     styleMap: ['u => em']
 }
-mammothPlus.convertToHtml(
+mammoth.convertToHtml(
     {
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -249,12 +249,12 @@ This behaviour can be changed by adding a style mapping for `strike`.
 For instance, to wrap strikethrough text in `<del>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
 var options = {
     styleMap: ['strike => del']
 }
-mammothPlus.convertToHtml(
+mammoth.convertToHtml(
     {
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -271,12 +271,12 @@ add a style mapping for `comment-reference`.
 For instance:
 
 ```javascript
-var mammothPlus = require('mammoth')
+var mammoth = require('mammoth')
 
 var options = {
     styleMap: ['comment-reference => sup']
 }
-mammothPlus.convertToHtml(
+mammoth.convertToHtml(
     {
         path: 'path/to/document.docx', // in node.js
         arrayBuffer: 'array buffer containing a .docx file' // in browser
@@ -339,7 +339,7 @@ For instance:
 
 ### API
 
-#### `mammothPlus.convertToHtml(input, options)`
+#### `mammoth.convertToHtml(input, options)`
 
 Converts the source document to HTML.
 
@@ -397,7 +397,7 @@ Converts the source document to HTML.
 
     -   `messages`: any messages, such as errors and warnings, generated during the conversion
 
-#### `mammothPlus.convertToMarkdown(input, options)`
+#### `mammoth.convertToMarkdown(input, options)`
 
 Markdown support is deprecated.
 Generating HTML and using a separate library to convert the HTML to Markdown is recommended,
@@ -407,7 +407,7 @@ Converts the source document to Markdown.
 This behaves the same as `convertToHtml`,
 except that the `value` property of the result contains Markdown rather than HTML.
 
-#### `mammothPlus.extractRawText(input)`
+#### `mammoth.extractRawText(input)`
 
 Extract the raw text of the document.
 This will ignore all formatting in the document.
@@ -430,7 +430,7 @@ Each paragraph is followed by two newlines.
 
     -   `messages`: any messages, such as errors and warnings
 
-#### `mammothPlus.embedStyleMap(input, styleMap)`
+#### `mammoth.embedStyleMap(input, styleMap)`
 
 Given an existing docx file,
 `embedStyleMap` will generate a new docx file with the passed style map embedded.
@@ -456,7 +456,7 @@ it will use the embedded style map.
 For instance:
 
 ```javascript
-mammothPlus
+mammoth
     .embedStyleMap(
         { path: sourcePath },
         "p[style-name='Section Title'] => h1:fresh"
@@ -479,7 +479,7 @@ Each message has the following properties:
 
 #### Image converters
 
-An image converter can be created by calling `mammothPlus.images.imgElement(func)`.
+An image converter can be created by calling `mammoth.images.imgElement(func)`.
 This creates an `<img>` element for each image in the original docx.
 `func` should be a function that has one argument `image`.
 This argument is the image element being converted,
@@ -509,7 +509,7 @@ this will be automatically added to the element's attributes.
 For instance, the following replicates the default image conversion:
 
 ```javascript
-mammothPlus.images.imgElement(function(image) {
+mammoth.images.imgElement(function(image) {
     return image.readAsBase64String().then(function(imageBuffer) {
         return {
             src: 'data:' + image.contentType + ';base64,' + imageBuffer
@@ -518,7 +518,7 @@ mammothPlus.images.imgElement(function(image) {
 })
 ```
 
-`mammothPlus.images.dataUri` is the default image converter.
+`mammoth.images.dataUri` is the default image converter.
 
 ### Document transforms
 
@@ -563,7 +563,7 @@ var options = {
 
 The return value of `transformDocument` is used during HTML generation.
 
-The above can be written more succinctly using the helper `mammothPlus.transforms.paragraph`:
+The above can be written more succinctly using the helper `mammoth.transforms.paragraph`:
 
 ```javascript
 function transformParagraph(element) {
@@ -575,7 +575,7 @@ function transformParagraph(element) {
 }
 
 var options = {
-    transformDocument: mammothPlus.transforms.paragraph(transformParagraph)
+    transformDocument: mammoth.transforms.paragraph(transformParagraph)
 }
 ```
 
@@ -585,7 +585,7 @@ Or if you want paragraphs that have been explicitly set to use monospace fonts t
 const monospaceFonts = ['consolas', 'courier', 'courier new']
 
 function transformParagraph(paragraph) {
-    var runs = mammothPlus.transforms.getDescendantsOfType(paragraph, 'run')
+    var runs = mammoth.transforms.getDescendantsOfType(paragraph, 'run')
     var isMatch =
         runs.length > 0 &&
         runs.every(function (run) {
@@ -606,34 +606,34 @@ function transformParagraph(paragraph) {
 }
 
 var options = {
-    transformDocument: mammothPlus.transforms.paragraph(transformParagraph),
+    transformDocument: mammoth.transforms.paragraph(transformParagraph),
     styleMap: ["p[style-name='Code'] => pre:separator('\n')"]
 }
 ```
 
-#### `mammothPlus.transforms.paragraph(transformParagraph)`
+#### `mammoth.transforms.paragraph(transformParagraph)`
 
 Returns a function that can be used as the `transformDocument` option.
 This will apply the function `transformParagraph` to each paragraph element.
 `transformParagraph` should return the new paragraph.
 
-#### `mammothPlus.transforms.run(transformRun)`
+#### `mammoth.transforms.run(transformRun)`
 
 Returns a function that can be used as the `transformDocument` option.
 This will apply the function `transformRun` to each run element.
 `transformRun` should return the new run.
 
-#### `mammothPlus.transforms.getDescendants(element)`
+#### `mammoth.transforms.getDescendants(element)`
 
 Gets all descendants of an element.
 
-#### `mammothPlus.transforms.getDescendantsOfType(element, type)`
+#### `mammoth.transforms.getDescendantsOfType(element, type)`
 
 Gets all descendants of a particular type of an element.
 For instance, to get all runs within an element `paragraph`:
 
 ```javascript
-var runs = mammothPlus.transforms.getDescendantsOfType(paragraph, 'run')
+var runs = mammoth.transforms.getDescendantsOfType(paragraph, 'run')
 ```
 
 ## Writing style maps

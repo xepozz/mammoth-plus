@@ -3,7 +3,7 @@ var path = require("path");
 var fs = require("fs");
 var _ = require("underscore");
 
-var mammothPlus = require("../");
+var mammoth = require("../");
 var promises = require("../lib/promises");
 var results = require("../lib/results");
 
@@ -16,7 +16,7 @@ describe("mammoth tests", function() {
 
     it('should convert docx containing one paragraph to single p element', function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, "<p>Walking on imported air</p>");
             assert.deepEqual(result.messages, []);
         });
@@ -26,7 +26,7 @@ describe("mammoth tests", function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
         return promises.nfcall(fs.readFile, docxPath)
             .then(function(buffer) {
-                return mammothPlus.convertToHtml({buffer: buffer});
+                return mammoth.convertToHtml({buffer: buffer});
             })
             .then(function(result) {
                 assert.equal(result.value, "<p>Walking on imported air</p>");
@@ -36,7 +36,7 @@ describe("mammoth tests", function() {
 
     it('should read docx xml files with unicode byte order mark', function() {
         var docxPath = path.join(__dirname, "test-data/utf8-bom.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, "<p>This XML has a byte order mark.</p>");
             assert.deepEqual(result.messages, []);
         });
@@ -44,7 +44,7 @@ describe("mammoth tests", function() {
 
     it('empty paragraphs are ignored by default', function() {
         var docxPath = path.join(__dirname, "test-data/empty.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, "");
             assert.deepEqual(result.messages, []);
         });
@@ -52,7 +52,7 @@ describe("mammoth tests", function() {
 
     it('empty paragraphs are preserved if ignoreEmptyParagraphs is false', function() {
         var docxPath = path.join(__dirname, "test-data/empty.docx");
-        return mammothPlus.convertToHtml({path: docxPath}, {ignoreEmptyParagraphs: false}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {ignoreEmptyParagraphs: false}).then(function(result) {
             assert.equal(result.value, "<p></p>");
             assert.deepEqual(result.messages, []);
         });
@@ -65,7 +65,7 @@ describe("mammoth tests", function() {
         var options = {
             styleMap: "p => h1"
         };
-        return mammothPlus.convertToHtml({file: docxFile}, options).then(function(result) {
+        return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
             assert.equal("<h1>Hello.</h1>", result.value);
         });
     });
@@ -77,14 +77,14 @@ describe("mammoth tests", function() {
         var options = {
             styleMap: ["p => h1"]
         };
-        return mammothPlus.convertToHtml({file: docxFile}, options).then(function(result) {
+        return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
             assert.equal("<h1>Hello.</h1>", result.value);
         });
     });
 
     it('embedded style map is used if present', function() {
         var docxPath = path.join(__dirname, "test-data/embedded-style-map.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, "<h1>Walking on imported air</h1>");
             assert.deepEqual(result.messages, []);
         });
@@ -95,7 +95,7 @@ describe("mammoth tests", function() {
         var options = {
             styleMap: ["p => h1"]
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             assert.equal(result.value, "<h1>Walking on imported air</h1>");
             assert.deepEqual(result.messages, []);
         });
@@ -106,7 +106,7 @@ describe("mammoth tests", function() {
         var options = {
             styleMap: ["r => strong"]
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             assert.equal(result.value, "<h1><strong>Walking on imported air</strong></h1>");
             assert.deepEqual(result.messages, []);
         });
@@ -117,7 +117,7 @@ describe("mammoth tests", function() {
         var options = {
             includeEmbeddedStyleMap: false
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             assert.equal(result.value, "<p>Walking on imported air</p>");
             assert.deepEqual(result.messages, []);
         });
@@ -127,12 +127,12 @@ describe("mammoth tests", function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
         return promises.nfcall(fs.readFile, docxPath)
             .then(function(buffer) {
-                return mammothPlus.embedStyleMap({buffer: buffer}, "p => h1");
+                return mammoth.embedStyleMap({buffer: buffer}, "p => h1");
             })
             .then(function(docx) {
                 var buffer = docx.toBuffer();
                 assert.ok(Buffer.isBuffer(buffer));
-                return mammothPlus.convertToHtml({buffer: buffer});
+                return mammoth.convertToHtml({buffer: buffer});
             })
             .then(function(result) {
                 assert.equal(result.value, "<h1>Walking on imported air</h1>");
@@ -144,12 +144,12 @@ describe("mammoth tests", function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
         return promises.nfcall(fs.readFile, docxPath)
             .then(function(buffer) {
-                return mammothPlus.embedStyleMap({buffer: buffer}, "p => h1");
+                return mammoth.embedStyleMap({buffer: buffer}, "p => h1");
             })
             .then(function(docx) {
                 var arrayBuffer = docx.toArrayBuffer();
                 assert.ok(!Buffer.isBuffer(arrayBuffer));
-                return mammothPlus.convertToHtml({buffer: Buffer.from(arrayBuffer)});
+                return mammoth.convertToHtml({buffer: Buffer.from(arrayBuffer)});
             })
             .then(function(result) {
                 assert.equal(result.value, "<h1>Walking on imported air</h1>");
@@ -161,10 +161,10 @@ describe("mammoth tests", function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
         return promises.nfcall(fs.readFile, docxPath)
             .then(function(buffer) {
-                return mammothPlus.embedStyleMap({buffer: buffer}, "p => h1");
+                return mammoth.embedStyleMap({buffer: buffer}, "p => h1");
             })
             .then(function(docx) {
-                return mammothPlus.readEmbeddedStyleMap({buffer: docx.toBuffer()});
+                return mammoth.readEmbeddedStyleMap({buffer: docx.toBuffer()});
             })
             .then(function(styleMap) {
                 assert.equal(styleMap, "p => h1");
@@ -176,7 +176,7 @@ describe("mammoth tests", function() {
         var options = {
             styleMap: "????\np => h1"
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             assert.equal("<h1>Walking on imported air</h1>", result.value);
             var warning = "Did not understand this style mapping, so ignored it: ????\n" +
               'Error was at character number 1: Expected element type but got unrecognisedCharacter "?"';
@@ -184,14 +184,14 @@ describe("mammoth tests", function() {
         });
     });
 
-    it('options are passed to document converter when calling mammothPlus.convertToHtml', function() {
+    it('options are passed to document converter when calling mammoth.convertToHtml', function() {
         var docxFile = createFakeDocxFile({
             "word/document.xml": testData("simple/word/document.xml")
         });
         var options = {
             styleMap: "p => h1"
         };
-        return mammothPlus.convertToHtml({file: docxFile}, options).then(function(result) {
+        return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
             assert.equal("<h1>Hello.</h1>", result.value);
         });
     });
@@ -206,47 +206,47 @@ describe("mammoth tests", function() {
                 return document;
             }
         };
-        return mammothPlus.convertToHtml({file: docxFile}, options).then(function(result) {
+        return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
             assert.equal("<h1>Hello.</h1>", result.value);
         });
     });
 
-    it('mammothPlus.transforms.paragraph only transforms paragraphs', function() {
+    it('mammoth.transforms.paragraph only transforms paragraphs', function() {
         var docxFile = createFakeDocxFile({
             "word/document.xml": testData("simple/word/document.xml")
         });
         var options = {
-            transformDocument: mammothPlus.transforms.paragraph(function(paragraph) {
+            transformDocument: mammoth.transforms.paragraph(function(paragraph) {
                 return _.extend(paragraph, {styleId: "Heading1"});
             })
         };
-        return mammothPlus.convertToHtml({file: docxFile}, options).then(function(result) {
+        return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
             assert.equal("<h1>Hello.</h1>", result.value);
         });
     });
 
     it('inline images referenced by path relative to part are included in output', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, '<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=" width="7.5" height="7.5" /></p>');
         });
     });
 
     it('inline images referenced by path relative to base are included in output', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture-target-base-relative.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, '<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=" width="7.5" height="7.5" /></p>');
         });
     });
 
     it('src of inline images can be changed using read("base64")', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
-        var convertImage = mammothPlus.images.imgElement(function(element) {
+        var convertImage = mammoth.images.imgElement(function(element) {
             return element.read("base64").then(function(encodedImage) {
                 return {src: encodedImage.substring(0, 2) + "," + element.contentType};
             });
         });
-        return mammothPlus.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
             assert.deepEqual(result.messages, []);
             assert.equal(result.value, '<p><img src="iV,image/png" /></p>');
         });
@@ -254,12 +254,12 @@ describe("mammoth tests", function() {
 
     it('src of inline images can be changed using readAsBase64String()', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
-        var convertImage = mammothPlus.images.imgElement(function(element) {
+        var convertImage = mammoth.images.imgElement(function(element) {
             return element.readAsBase64String().then(function(encodedImage) {
                 return {src: encodedImage.substring(0, 2) + "," + element.contentType};
             });
         });
-        return mammothPlus.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
             assert.deepEqual(result.messages, []);
             assert.equal(result.value, '<p><img src="iV,image/png" /></p>');
         });
@@ -267,14 +267,14 @@ describe("mammoth tests", function() {
 
     it('src of inline images can be changed using readAsArrayBuffer()', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
-        var convertImage = mammothPlus.images.imgElement(function(element) {
+        var convertImage = mammoth.images.imgElement(function(element) {
             return element.readAsArrayBuffer().then(function(arrayBuffer) {
                 assert.ok(!Buffer.isBuffer(arrayBuffer));
                 var encodedImage = Buffer.from(arrayBuffer).toString("base64");
                 return {src: encodedImage.substring(0, 2) + "," + element.contentType};
             });
         });
-        return mammothPlus.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
             assert.deepEqual(result.messages, []);
             assert.equal(result.value, '<p><img src="iV,image/png" /></p>');
         });
@@ -282,14 +282,14 @@ describe("mammoth tests", function() {
 
     it('src of inline images can be changed using read()', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
-        var convertImage = mammothPlus.images.imgElement(function(element) {
+        var convertImage = mammoth.images.imgElement(function(element) {
             return element.read().then(function(buffer) {
                 assert.ok(Buffer.isBuffer(buffer));
                 var encodedImage = buffer.toString("base64");
                 return {src: encodedImage.substring(0, 2) + "," + element.contentType};
             });
         });
-        return mammothPlus.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
             assert.deepEqual(result.messages, []);
             assert.equal(result.value, '<p><img src="iV,image/png" /></p>');
         });
@@ -297,14 +297,14 @@ describe("mammoth tests", function() {
 
     it('src of inline images can be changed using readAsBuffer()', function() {
         var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
-        var convertImage = mammothPlus.images.imgElement(function(element) {
+        var convertImage = mammoth.images.imgElement(function(element) {
             return element.readAsBuffer().then(function(buffer) {
                 assert.ok(Buffer.isBuffer(buffer));
                 var encodedImage = buffer.toString("base64");
                 return {src: encodedImage.substring(0, 2) + "," + element.contentType};
             });
         });
-        return mammothPlus.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {convertImage: convertImage}).then(function(result) {
             assert.deepEqual(result.messages, []);
             assert.equal(result.value, '<p><img src="iV,image/png" /></p>');
         });
@@ -312,7 +312,7 @@ describe("mammoth tests", function() {
 
     it('images stored outside of document are included in output', function() {
         var docxPath = path.join(__dirname, "test-data/external-picture.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, '<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=" width="7.5" height="7.5" /></p>');
             assert.deepEqual(result.messages, []);
         });
@@ -321,7 +321,7 @@ describe("mammoth tests", function() {
     it('error if images stored outside of document are specified when passing file without path', function() {
         var docxPath = path.join(__dirname, "test-data/external-picture.docx");
         var buffer = fs.readFileSync(docxPath);
-        return mammothPlus.convertToHtml({buffer: buffer}).then(function(result) {
+        return mammoth.convertToHtml({buffer: buffer}).then(function(result) {
             assert.equal(result.value, '');
             assert.equal(result.messages[0].message, "could not find external image 'tiny-picture.png', path of input document is unknown");
             assert.equal(result.messages[0].type, "error");
@@ -330,14 +330,14 @@ describe("mammoth tests", function() {
 
     it('simple list is converted to list elements', function() {
         var docxPath = path.join(__dirname, "test-data/simple-list.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, '<ul><li>Apple</li><li>Banana</li></ul>');
         });
     });
 
     it('word tables are converted to html tables', function() {
         var docxPath = path.join(__dirname, "test-data/tables.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             var expectedHtml = "<p>Above</p>" +
               "<table>" +
               "<tr><td><p>Top left</p></td><td><p>Top right</p></td></tr>" +
@@ -355,7 +355,7 @@ describe("mammoth tests", function() {
         var options = {
             idPrefix: "doc-42-"
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             var expectedOutput = '<p>Ouch' +
               '<sup><a href="#doc-42-footnote-1" id="doc-42-footnote-ref-1">[1]</a></sup>.' +
               '<sup><a href="#doc-42-footnote-2" id="doc-42-footnote-ref-2">[2]</a></sup></p>' +
@@ -371,7 +371,7 @@ describe("mammoth tests", function() {
         var options = {
             idPrefix: "doc-42-"
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             var expectedOutput = '<p>Ouch' +
               '<sup><a href="#doc-42-endnote-2" id="doc-42-endnote-ref-2">[1]</a></sup>.' +
               '<sup><a href="#doc-42-endnote-3" id="doc-42-endnote-ref-3">[2]</a></sup></p>' +
@@ -387,7 +387,7 @@ describe("mammoth tests", function() {
         var options = {
             idPrefix: "doc-42-"
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             var expectedOutput =
               '<p><sup><a href="#doc-42-footnote-1" id="doc-42-footnote-ref-1">[1]</a></sup></p>' +
               '<ol><li id="doc-42-footnote-1"><p> <a href="http://www.example.com">Example</a> <a href="#doc-42-footnote-ref-1">↑</a></p></li></ol>';
@@ -402,7 +402,7 @@ describe("mammoth tests", function() {
             idPrefix: "doc-42-",
             styleMap: "comment-reference => sup"
         };
-        return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
             var expectedOutput = (
                 '<p>Ouch' +
               '<sup><a href="#doc-42-comment-0" id="doc-42-comment-ref-0">[MW1]</a></sup>.' +
@@ -417,7 +417,7 @@ describe("mammoth tests", function() {
 
     it('textboxes are read', function() {
         var docxPath = path.join(__dirname, "test-data/text-box.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             var expectedOutput = '<p>Datum plane</p>';
             assert.equal(result.value, expectedOutput);
         });
@@ -425,35 +425,35 @@ describe("mammoth tests", function() {
 
     it('underline is ignored by default', function() {
         var docxPath = path.join(__dirname, "test-data/underline.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, '<p><strong>The <u>Sunset</u> Tree</strong></p>');
         });
     });
 
     it('underline can be configured with style mapping', function() {
         var docxPath = path.join(__dirname, "test-data/underline.docx");
-        return mammothPlus.convertToHtml({path: docxPath}, {styleMap: "u => em"}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {styleMap: "u => em"}).then(function(result) {
             assert.equal(result.value, '<p><strong>The <em>Sunset</em> Tree</strong></p>');
         });
     });
 
     it('strikethrough is converted to <s> by default', function() {
         var docxPath = path.join(__dirname, "test-data/strikethrough.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, "<p><s>Today's Special: Salmon</s> Sold out</p>");
         });
     });
 
     it('strikethrough conversion can be configured with style mappings', function() {
         var docxPath = path.join(__dirname, "test-data/strikethrough.docx");
-        return mammothPlus.convertToHtml({path: docxPath}, {styleMap: "strike => del"}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {styleMap: "strike => del"}).then(function(result) {
             assert.equal(result.value, "<p><del>Today's Special: Salmon</del> Sold out</p>");
         });
     });
 
     it('indentation is used if prettyPrint is true', function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-        return mammothPlus.convertToHtml({path: docxPath}, {prettyPrint: true}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}, {prettyPrint: true}).then(function(result) {
             assert.equal(result.value, "<p>\n  Walking on imported air\n</p>");
             assert.deepEqual(result.messages, []);
         });
@@ -461,18 +461,18 @@ describe("mammoth tests", function() {
 
     it('using styleMapping throws error', function() {
         try {
-            mammothPlus.styleMapping();
+            mammoth.styleMapping();
         } catch (error) {
             assert.equal(
                 error.message,
-                'Use a raw string instead of mammothPlus.styleMapping e.g. "p[style-name=\'Title\'] => h1" instead of mammothPlus.styleMapping("p[style-name=\'Title\'] => h1")'
+                'Use a raw string instead of mammoth.styleMapping e.g. "p[style-name=\'Title\'] => h1" instead of mammoth.styleMapping("p[style-name=\'Title\'] => h1")'
             );
         }
     });
 
     it('can convert single paragraph to markdown', function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-        return mammothPlus.convertToMarkdown({path: docxPath}).then(function(result) {
+        return mammoth.convertToMarkdown({path: docxPath}).then(function(result) {
             assert.equal(result.value, "Walking on imported air\n\n");
             assert.deepEqual(result.messages, []);
         });
@@ -480,7 +480,7 @@ describe("mammoth tests", function() {
 
     it('extractRawText only retains raw text', function() {
         var docxPath = path.join(__dirname, "test-data/simple-list.docx");
-        return mammothPlus.extractRawText({path: docxPath}).then(function(result) {
+        return mammoth.extractRawText({path: docxPath}).then(function(result) {
             assert.equal(result.value, 'Apple\n\nBanana\n\n');
         });
     });
@@ -489,7 +489,7 @@ describe("mammoth tests", function() {
         var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
         return promises.nfcall(fs.readFile, docxPath)
             .then(function(buffer) {
-                return mammothPlus.extractRawText({buffer: buffer});
+                return mammoth.extractRawText({buffer: buffer});
             })
             .then(function(result) {
                 assert.equal(result.value, "Walking on imported air\n\n");
@@ -499,7 +499,7 @@ describe("mammoth tests", function() {
 
     it('can read strict format', function() {
         var docxPath = path.join(__dirname, "test-data/strict-format.docx");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.equal(result.value, "<p>Test</p>");
             assert.deepEqual(result.messages, []);
         });
@@ -507,7 +507,7 @@ describe("mammoth tests", function() {
 
     it('should throw error if file is not a valid docx document', function() {
         var docxPath = path.join(__dirname, "test-data/empty.zip");
-        return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
+        return mammoth.convertToHtml({path: docxPath}).then(function(result) {
             assert.ok(false, "Expected error");
         }, function(error) {
             assert.equal(error.message, "Could not find main document part. Are you sure this is a valid .docx file?");

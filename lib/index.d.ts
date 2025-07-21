@@ -1,4 +1,4 @@
-interface mammothPlus {
+interface mammoth {
     convertToHtml: (input: Input, options?: Options) => Promise<Result>;
     extractRawText: (input: Input) => Promise<Result>;
     embedStyleMap: (input: Input, styleMap: string) => Promise<{
@@ -37,7 +37,7 @@ interface Options {
 }
 
 interface ImageConverter {
-    __mammothPlusBrand: "ImageConverter";
+    __mammothBrand: "ImageConverter";
 }
 
 interface Image {
@@ -80,6 +80,6 @@ interface Error {
     error: unknown;
 }
 
-declare const mammothPlus: mammothPlus;
+declare const mammoth: mammoth;
 
-export = mammothPlus;
+export = mammoth;

@@ -4,7 +4,7 @@
 
     function handleFileSelect(event) {
         readFileInputEventAsArrayBuffer(event, function(arrayBuffer) {
-            mammothPlus.convertToHtml({arrayBuffer: arrayBuffer})
+            mammoth.convertToHtml({arrayBuffer: arrayBuffer})
                 .then(displayResult)
                 .then(MathJax.typeset)
                 .done();
