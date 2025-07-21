@@ -2,8 +2,10 @@ var assert = require("assert");
 
 var xmlreader = require("../../lib/docx/office-xml-reader");
 
-it('simplify clark notation. nothing to replace', function() {
-    var xmlString = `<?xml version="1.0" encoding="UTF-8"?>
+describe("xml clark notation transformation", function() {
+
+    it('simplify clark notation. nothing to replace', function () {
+        var xmlString = `<?xml version="1.0" encoding="UTF-8"?>
 <w:document xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
             xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
             xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -69,36 +71,36 @@ it('simplify clark notation. nothing to replace', function() {
 </w:document>
 `;
 
-    assert.equal(xmlString, xmlreader.simplifyClarkNotation(xmlString));
-});
+        assert.equal(xmlString, xmlreader.simplifyClarkNotation(xmlString));
+    });
 
 
-it('simplify clark notation. replace', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    it('simplify clark notation. replace', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:r>
         <m:t{http://www.w3.org/XML/1998/namespace}space="preserve"> ∈ 
         G</m:t>
     </m:r>
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:r>
         <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
         G</m:t>
     </m:r>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
-});
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
 
-it('simplify clark notation. not replace', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    it('simplify clark notation. not replace', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:r>
     <tag1>{</tag1>
     <tag1>}</tag1>
     <tag1 attr="value"/>
     </m:r>
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:r>
     <tag1>{</tag1>
     <tag1>}</tag1>
@@ -106,11 +108,11 @@ it('simplify clark notation. not replace', function() {
     </m:r>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
-});
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
 
-it('simplify clark notation. xmlns in each tag', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    it('simplify clark notation. xmlns in each tag', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t{http://www.w3.org/XML/1998/namespace}space="preserve"> ∈ 
         G</m:t>
     <m:t{http://www.w3.org/XML/1998/namespace}space="preserve" {http://www.w3.org/XML/1998/namespace}test="ok"> ∈ 
@@ -118,7 +120,7 @@ it('simplify clark notation. xmlns in each tag', function() {
     <m:t {http://schemas.openxmlformats.org/officeDocument/2006/math}space="preserve"> ∈ 
     G</m:t>
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t ns:space="preserve" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
         G</m:t>
     <m:t ns:space="preserve"  ns:test="ok" xmlns:ns="http://www.w3.org/XML/1998/namespace"> ∈ 
@@ -127,60 +129,61 @@ it('simplify clark notation. xmlns in each tag', function() {
     G</m:t>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
-});
-it('simplify clark notation. namespace from dict', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
+    it('simplify clark notation. namespace from dict', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t{http://schemas.openxmlformats.org/officeDocument/2006/math}space="preserve"> ∈ G</m:t>
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t m:space="preserve" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"> ∈ G</m:t>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
-});
-it('simplify clark notation. namespace increment', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
+    it('simplify clark notation. namespace increment', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t{http://schema1}space="preserve" />
     <m:t{http://schema2}space="preserve" />
     <m:t{http://schema3}space="preserve" />
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t ns3:space="preserve"  xmlns:ns3="http://schema1"/>
     <m:t ns2:space="preserve"  xmlns:ns2="http://schema2"/>
     <m:t ns1:space="preserve"  xmlns:ns1="http://schema3"/>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
-});
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
 
-it('simplify clark notation. subelements', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    it('simplify clark notation. subelements', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t{http://schema1}space="preserve">
         <el />
     </m:t>
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <m:t ns1:space="preserve" xmlns:ns1="http://schema1">
         <el />
     </m:t>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
-});
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
 
 
-it('simplify clark notation. wtf', function() {
-    var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+    it('simplify clark notation. wtf', function () {
+        var xmlString = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <w:rPr {http://www.w3.org/2000/xmlns/}w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
       <w:szCs w:val="25"/>
     </w:rPr>
     </w:document>`;
-    var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
+        var expected = `<w:document xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" >
     <w:rPr  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:xmlns="http://www.w3.org/2000/xmlns/">
       <w:szCs w:val="25"/>
     </w:rPr>
     </w:document>`;
 
-    assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
 });
