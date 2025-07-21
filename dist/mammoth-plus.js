@@ -1524,7 +1524,7 @@ function BodyReader(options) {
         if (blipImageFile === null) {
             return emptyResultWithMessages([warning("Could not find image file for a:blip element")]);
         } else {
-            var attrs = element.first("wp:extent").attributes;
+            var attrs = element.first("wp:extent").attributes || {};
             blipImageFile.width = attrs.cx ? String(attrs.cx / 12700) : null; // Emus to pt
             blipImageFile.height = attrs.cy ? String(attrs.cy / 12700) : null; // Emus to pt
 
@@ -2413,7 +2413,7 @@ exports.writeStyleMap = writeStyleMap;
 exports.readStyleMap = readStyleMap;
 
 
-var schema = "http://schemas.heweifeng.cn/mammoth/style-map";
+var schema = "http://schemas.zwobble.org/mammoth/style-map";
 var styleMapPath = "mammoth/style-map";
 var styleMapAbsolutePath = "/" + styleMapPath;
 
@@ -2907,7 +2907,7 @@ function embedStyleMap(input, styleMap) {
 }
 
 exports.styleMapping = function() {
-    throw new Error('Use a raw string instead of mammothPlus.styleMapping e.g. "p[style-name=\'Title\'] => h1" instead of mammothPlus.styleMapping("p[style-name=\'Title\'] => h1")');
+    throw new Error('Use a raw string instead of mammoth.styleMapping e.g. "p[style-name=\'Title\'] => h1" instead of mammoth.styleMapping("p[style-name=\'Title\'] => h1")');
 };
 
 }).call(this,require("buffer").Buffer)
