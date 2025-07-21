@@ -1,8 +1,8 @@
-# mammoth-plus .docx to HTML converter
+# mammoth .docx to HTML converter
 
-mammoth-plus is inspired by [Mammoth](https://github.com/mwilliamson/mammoth.js) and based on [Mammoth(v1.5.1)](https://github.com/mwilliamson/mammoth.js).
+mammoth is inspired by [Mammoth](https://github.com/mwilliamson/mammoth.js) and based on [Mammoth(v1.5.1)](https://github.com/mwilliamson/mammoth.js).
 
-mammoth-plus expands some features that [Mammoth](https://github.com/mwilliamson/mammoth.js) do not have, such as support math, styling, image size...
+mammoth expands some features that [Mammoth](https://github.com/mwilliamson/mammoth.js) do not have, such as support math, styling, image size...
 
 The following features are currently supported:
 
@@ -40,23 +40,23 @@ Try in [here](https://ihwf.github.io/mammoth-plus/)
 
 ## Installation
 
-    npm install mammoth-plus
+    npm install mammoth
 
 ## Usage
 
 ### Library
 
-mammoth-plus can be required/import in the usual way:
+mammoth can be required/import in the usual way:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 // or
-import mammothPlus from 'mammoth-plus'
+import mammothPlus from 'mammoth'
 ```
 
 If not use module system,
 to generate a standalone JavaScript file for the browser,
-use `mammoth-plus.min.js` (generate using `make setup` if it is not already present).
+use `mammoth.min.js` (generate using `make setup` if it is not already present).
 `mammothPlus` is set as a window global.
 
 The file can be generated using `make setup` during development.
@@ -66,7 +66,7 @@ The file can be generated using `make setup` during development.
 To convert an existing .docx file to HTML, use `mammothPlus.convertToHtml`:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 mammothPlus
     .convertToHtml({
@@ -106,7 +106,7 @@ mammothPlus
 #### Custom style map
 
 By default,
-mammoth-plus maps some common .docx styles to HTML elements.
+mammoth maps some common .docx styles to HTML elements.
 For instance,
 a paragraph with the style name `Heading 1` is converted to a `h1` element.
 You can pass in a custom map for styles by passing an options object with a `styleMap` property as a second argument to `convertToHtml`.
@@ -115,7 +115,7 @@ For instance, if paragraphs with the style name `Section Title` should be conver
 and paragraphs with the style name `Subsection Title` should be converted to `h2` elements:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 var options = {
     styleMap: [
@@ -185,7 +185,7 @@ This behaviour can be changed by adding a style mapping for `b`.
 For instance, to wrap bold text in `<em>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 var options = {
     styleMap: ['b => em']
@@ -206,7 +206,7 @@ This behaviour can be changed by adding a style mapping for `i`.
 For instance, to wrap italic text in `<strong>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 var options = {
     styleMap: ['i => strong']
@@ -228,7 +228,7 @@ For instance, suppose that a source document uses underlining for emphasis.
 The following will wrap any explicitly underlined source text in `<em>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 var options = {
     styleMap: ['u => em']
@@ -249,7 +249,7 @@ This behaviour can be changed by adding a style mapping for `strike`.
 For instance, to wrap strikethrough text in `<del>` tags:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 var options = {
     styleMap: ['strike => del']
@@ -271,7 +271,7 @@ add a style mapping for `comment-reference`.
 For instance:
 
 ```javascript
-var mammothPlus = require('mammoth-plus')
+var mammothPlus = require('mammoth')
 
 var options = {
     styleMap: ['comment-reference => sup']
@@ -293,7 +293,7 @@ with links to the comments wrapped using the specified style mapping.
 You can convert docx files by passing the path to the docx file and the output file.
 For instance:
 
-    mammoth-plus document.docx output.html
+    mammoth document.docx output.html
 
 If no output file is specified, output is written to stdout instead.
 
@@ -308,7 +308,7 @@ If an output directory is specified by `--output-dir`,
 the images are written to separate files instead.
 For instance:
 
-    mammoth-plus document.docx --output-dir=output-dir
+    mammoth document.docx --output-dir=output-dir
 
 Existing files will be overwritten if present.
 
@@ -317,7 +317,7 @@ Existing files will be overwritten if present.
 A custom style map can be read from a file using `--style-map`.
 For instance:
 
-    mammoth-plus document.docx output.html --style-map=custom-style-map
+    mammoth document.docx output.html --style-map=custom-style-map
 
 Where `custom-style-map` looks something like:
 
@@ -335,7 +335,7 @@ and is likely to produce better results.
 Using `--output-format=markdown` will cause Markdown to be generated.
 For instance:
 
-    mammoth-plus document.docx --output-format=markdown
+    mammoth document.docx --output-format=markdown
 
 ### API
 
@@ -434,7 +434,7 @@ Each paragraph is followed by two newlines.
 
 Given an existing docx file,
 `embedStyleMap` will generate a new docx file with the passed style map embedded.
-When the new docx file is read by mammoth-plus,
+When the new docx file is read by mammoth,
 it will use the embedded style map.
 
 -   `input`: an object describing the source document.
@@ -525,10 +525,10 @@ mammothPlus.images.imgElement(function(image) {
 **The API for document transforms should be considered unstable,
 and may change between any versions.
 If you rely on this behaviour,
-you should pin to a specific version of mammoth-plus.js,
+you should pin to a specific version of mammoth.js,
 and test carefully before updating.**
 
-mammoth-plus allows a document to be transformed before it is converted.
+mammoth allows a document to be transformed before it is converted.
 For instance,
 suppose that document has not been semantically marked up,
 but you know that any centre-aligned paragraph should be a heading.
@@ -647,17 +647,17 @@ A style mapping has two parts:
 -   On the right, after the arrow, is the HTML path.
 
 When converting each paragraph,
-mammoth-plus finds the first style mapping where the document element matcher matches the current paragraph.
-mammoth-plus then ensures the HTML path is satisfied.
+mammoth finds the first style mapping where the document element matcher matches the current paragraph.
+mammoth then ensures the HTML path is satisfied.
 
 ### Freshness
 
-When writing style mappings, it's helpful to understand mammoth-plus's notion of freshness.
-When generating, mammoth-plus will only close an HTML element when necessary.
+When writing style mappings, it's helpful to understand mammoth's notion of freshness.
+When generating, mammoth will only close an HTML element when necessary.
 Otherwise, elements are reused.
 
 For instance, suppose one of the specified style mappings is `p[style-name='Heading 1'] => h1`.
-If mammoth-plus encounters a .docx paragraph with the style name `Heading 1`,
+If mammoth encounters a .docx paragraph with the style name `Heading 1`,
 the .docx paragraph is converted to a `h1` element with the same text.
 If the next .docx paragraph also has the style name `Heading 1`,
 then the text of that paragraph will be appended to the _existing_ `h1` element,

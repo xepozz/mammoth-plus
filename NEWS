@@ -82,7 +82,7 @@
 # 1.5.0
 
 -   Only use the alt text of image elements as a fallback. If an alt attribute is
-    returned from the function passed to mammoth-plus.images.imgElement, that value
+    returned from the function passed to mammoth.images.imgElement, that value
     will now be preferred to the alt text of the image element.
 
 # 1.4.21
@@ -305,7 +305,7 @@
 -   The default ID prefix is now the empty string rather than a random number
     followed by a hyphen.
 
--   Rename mammoth-plus.images.inline to mammoth-plus.images.imgElement to better reflect
+-   Rename mammoth.images.inline to mammoth.images.imgElement to better reflect
     its behaviour.
 
 # 0.3.33
@@ -431,7 +431,7 @@
 
 # 0.3.13
 
--   Update license-sniffer to fix license comments in mammoth-plus.browser.js.
+-   Update license-sniffer to fix license comments in mammoth.browser.js.
 
 # 0.3.12
 
@@ -459,15 +459,15 @@
 
 # 0.3.6
 
--   Add helper `mammoth-plus.transforms.paragraph`.
+-   Add helper `mammoth.transforms.paragraph`.
 
 # 0.3.5
 
--   Add `mammoth-plus.images.inline`, and document custom image conversion.
+-   Add `mammoth.images.inline`, and document custom image conversion.
 
 # 0.3.4
 
--   Add the function `mammoth-plus.extractRawText`.
+-   Add the function `mammoth.extractRawText`.
 
 # 0.3.3
 
@@ -508,7 +508,7 @@
 
 # 0.2.0
 
--   Rename mammoth-plus.style() to mammoth-plus.styleMapping().
+-   Rename mammoth.style() to mammoth.styleMapping().
 
 -   Add support for document transforms.
 

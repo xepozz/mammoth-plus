@@ -85,7 +85,7 @@ describe("mammoth tests", function() {
     it('embedded style map is used if present', function() {
         var docxPath = path.join(__dirname, "test-data/embedded-style-map.docx");
         return mammothPlus.convertToHtml({path: docxPath}).then(function(result) {
-            assert.equal(result.value, "<p>Walking on imported air</p>");
+            assert.equal(result.value, "<h1>Walking on imported air</h1>");
             assert.deepEqual(result.messages, []);
         });
     });
@@ -107,7 +107,7 @@ describe("mammoth tests", function() {
             styleMap: ["r => strong"]
         };
         return mammothPlus.convertToHtml({path: docxPath}, options).then(function(result) {
-            assert.equal(result.value, "<p><strong>Walking on imported air</strong></p>");
+            assert.equal(result.value, "<h1><strong>Walking on imported air</strong></h1>");
             assert.deepEqual(result.messages, []);
         });
     });

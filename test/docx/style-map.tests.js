@@ -27,7 +27,7 @@ describe("style map tests", function() {
     it('embedded style map is written to separate file', function () {
         return normalDocx().then(function (zip) {
             return styleMap.writeStyleMap(zip, "p => h1").then(function () {
-                return zip.read("mammoth-plus/style-map", "utf8").then(function (contents) {
+                return zip.read("mammoth/style-map", "utf8").then(function (contents) {
                     assert.equal(contents, "p => h1");
                 });
             });
@@ -85,13 +85,13 @@ describe("style map tests", function() {
     var expectedRelationshipsXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
       '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>' +
-      '<Relationship Id="rmammothPlusStyleMap" Type="http://schemas.heweifeng.cn/mammoth-plus/style-map" Target="/mammoth-plus/style-map"/>' +
+      '<Relationship Id="rMammothStyleMap" Type="http://schemas.heweifeng.cn/mammoth/style-map" Target="/mammoth/style-map"/>' +
       '</Relationships>';
 
     var expectedContentTypesXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
       '<Default Extension="png" ContentType="image/png"/>' +
-      '<Override PartName="/mammoth-plus/style-map" ContentType="text/prs.mammoth-plus.style-map"/>' +
+      '<Override PartName="/mammoth/style-map" ContentType="text/prs.mammoth.style-map"/>' +
       '</Types>';
 
     function normalDocx() {

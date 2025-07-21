@@ -73,7 +73,7 @@ describe("main tests", function() {
         var args = Array.prototype.slice.call(arguments, 0);
         var deferred = promises.defer();
 
-        var processArgs = ["node", "bin/mammoth-plus"].concat(args);
+        var processArgs = ["node", "bin/mammoth"].concat(args);
         // TODO: proper escaping of args
         var command = processArgs.join(" ");
         child_process.exec(command, function(error, stdout, stderr) { // eslint-disable-line camelcase

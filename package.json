@@ -58,7 +58,7 @@
         "./lib/docx/files.js": "./browser/docx/files.js"
     },
     "bin": {
-        "mammoth-plus": "bin/mammoth-plus"
+        "mammoth": "bin/mammoth"
     },
     "scripts": {
         "test": "mocha test --recursive",
