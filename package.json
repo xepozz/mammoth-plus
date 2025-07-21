@@ -48,6 +48,11 @@
         "typescript": "^5.0.4",
         "uglify-js": "~3.17.4"
     },
+    "overrides": {
+        "omml2mathml": {
+            "xpath": "^0.0.34"
+        }
+    },
     "browser": {
         "./lib/unzip.js": "./browser/unzip.js",
         "./lib/docx/files.js": "./browser/docx/files.js"
