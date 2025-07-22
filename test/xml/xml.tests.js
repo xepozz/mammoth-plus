@@ -186,4 +186,86 @@ describe("xml clark notation transformation", function() {
 
         assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
     });
+    it('simplify clark notation. drawing', function () {
+        var xmlString = `<m:oMathPara>
+            <m:oMath>
+                <w:drawing>
+                    <wp:inline distT="0" distB="0" distL="0" distR="0" {http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing}anchorId="48AA7622" {http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing}editId="4E82CB65">
+                    <wp:extent cx="304944" cy="308610"/>
+                    <wp:effectExtent l="0" t="0" r="0" b="0"/>
+                    <wp:docPr id="806480749" name="Рисунок 1"/>
+                    <wp:cNvGraphicFramePr>
+                        <a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/>
+                    </wp:cNvGraphicFramePr>
+                    <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                        <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                            <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                <pic:nvPicPr>
+                                    <pic:cNvPr id="1953488876" name=""/>
+                                    <pic:cNvPicPr/>
+                                </pic:nvPicPr>
+                                <pic:blipFill>
+                                    <a:blip r:embed="rId9"/>
+                                    <a:stretch>
+                                        <a:fillRect/>
+                                    </a:stretch>
+                                </pic:blipFill>
+                                <pic:spPr>
+                                    <a:xfrm>
+                                        <a:off x="0" y="0"/>
+                                        <a:ext cx="337586" cy="341645"/>
+                                    </a:xfrm>
+                                    <a:prstGeom prst="rect">
+                                        <a:avLst/>
+                                    </a:prstGeom>
+                                </pic:spPr>
+                            </pic:pic>
+                        </a:graphicData>
+                    </a:graphic>
+                    </wp:inline>
+                </w:drawing>
+            </m:oMath>
+        </m:oMathPara>`;
+        var expected = `<m:oMathPara>
+            <m:oMath>
+                <w:drawing>
+                    <wp:inline distT="0" distB="0" distL="0" distR="0"  ns1:anchorId="48AA7622"  ns1:editId="4E82CB65" xmlns:ns1="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing">
+                    <wp:extent cx="304944" cy="308610"/>
+                    <wp:effectExtent l="0" t="0" r="0" b="0"/>
+                    <wp:docPr id="806480749" name="Рисунок 1"/>
+                    <wp:cNvGraphicFramePr>
+                        <a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/>
+                    </wp:cNvGraphicFramePr>
+                    <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                        <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                            <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                <pic:nvPicPr>
+                                    <pic:cNvPr id="1953488876" name=""/>
+                                    <pic:cNvPicPr/>
+                                </pic:nvPicPr>
+                                <pic:blipFill>
+                                    <a:blip r:embed="rId9"/>
+                                    <a:stretch>
+                                        <a:fillRect/>
+                                    </a:stretch>
+                                </pic:blipFill>
+                                <pic:spPr>
+                                    <a:xfrm>
+                                        <a:off x="0" y="0"/>
+                                        <a:ext cx="337586" cy="341645"/>
+                                    </a:xfrm>
+                                    <a:prstGeom prst="rect">
+                                        <a:avLst/>
+                                    </a:prstGeom>
+                                </pic:spPr>
+                            </pic:pic>
+                        </a:graphicData>
+                    </a:graphic>
+                    </wp:inline>
+                </w:drawing>
+            </m:oMath>
+        </m:oMathPara>`;
+
+        assert.equal(xmlreader.simplifyClarkNotation(xmlString), expected);
+    });
 });
