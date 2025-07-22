@@ -40,12 +40,18 @@
         "browserify": "~13.0.1",
         "browserify-prepend-licenses": "~1.0.0",
         "duck": "^0.1.12",
-        "eslint": "2.13.1",
+        "eslint": "^9.31.0",
+        "eslint-plugin-mocha": "^11.1.0",
         "hamjest": "^4.0.1",
         "mocha": "^11.7.1",
         "temp": "^0.9.4",
         "typescript": "^5.0.4",
         "uglify-js": "~3.17.4"
+    },
+    "overrides": {
+        "omml2mathml": {
+            "xpath": "^0.0.34"
+        }
     },
     "browser": {
         "./lib/unzip.js": "./browser/unzip.js",
@@ -55,8 +61,7 @@
         "mammoth-plus": "bin/mammoth-plus"
     },
     "scripts": {
-        "pretest": "eslint lib test",
-        "test": "mocha test",
+        "test": "mocha test --recursive",
         "check-typescript": "tsc --noEmit lib/index.d.ts",
         "prepare": "make mammoth-plus.min.js"
     },

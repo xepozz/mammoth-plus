@@ -17,9 +17,8 @@ describe("mc:AlternateContent", function() {
             '</mc:Fallback>' +
             '</mc:AlternateContent>' +
             '</numbering>';
-        return officeXmlReader.read(xmlString).then(function(element) {
-            assert.deepEqual(element.children, [xml.element("fallback")]);
-        });
+        const element = officeXmlReader.read(xmlString);
+        assert.deepEqual(element.children, [xml.element("fallback")]);
     });
 
     it("when mc:Fallback is not present then element is ignored", function() {
@@ -32,8 +31,7 @@ describe("mc:AlternateContent", function() {
           '</mc:Choice>' +
           '</mc:AlternateContent>' +
           '</numbering>';
-        return officeXmlReader.read(xmlString).then(function(element) {
-            assert.deepEqual(element.children, []);
-        });
+        const element = officeXmlReader.read(xmlString);
+        assert.deepEqual(element.children, []);
     });
 });
