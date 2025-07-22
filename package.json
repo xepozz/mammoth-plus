@@ -18,7 +18,7 @@
     "main": "./lib/index.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ihwf/mammoth-plus"
+        "url": "https://github.com/xepozz/mammoth-plus"
     },
     "dependencies": {
         "@xmldom/xmldom": "^0.8.10",
