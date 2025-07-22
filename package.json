@@ -37,7 +37,7 @@
     },
     "devDependencies": {
         "@types/node": "^20.2.5",
-        "browserify": "~13.0.1",
+        "browserify": "^17.0.1",
         "browserify-prepend-licenses": "~1.0.0",
         "duck": "^0.1.12",
         "eslint": "^9.31.0",
